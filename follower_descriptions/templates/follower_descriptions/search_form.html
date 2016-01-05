@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<form action='/follower_descriptions/search' method='post'>
+    {% csrf_token %}
+    <label>
+        Twitter Handle
+    </label>
+    <input type='text' name="twitter_handle" value=''/>
+    <br>
+    <label>
+        Search Term [1]
+    </label>
+    <input type='text' name="Search_1" value=''/>
+
+    <br>
+    <label>
+        Search Term [2]
+    </label>
+    <input type='text' name="Search_2" value=''/>
+
+    <br>
+    <label>
+        Search Term [3]
+    </label>
+    <input type='text' name="Search_3" value=''/>
+    <input type="submit" value="Run"/>
+</form>
+
+<table>
+    <thead>
+    <tr>
+        <th>user_id</th>
+        <th>screen_name</th>
+        <th>url</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for result in results %}
+    <tr>
+        <td>{{ result.user_id }}</td>
+        <td>{{ result.screen_name }}</td>
+        <td>{{ result.url }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>
