@@ -9,7 +9,8 @@ import celery
 # Create your views here.
 def search(request):
 
-    t = tasks.task_get_follower_ids.delay(request.POST["twitter_handle"])
+    twitter_handle = request.POST["twitter_handle"]
+    t = tasks.task_get_follower_ids.delay(twitter_handle)
 
 
     # Retrieve tasks

@@ -1,11 +1,11 @@
 from __future__ import absolute_import
-from celery import Celery
-import time
+import sys
 from datetime import datetime, timedelta
 from twitter import celery_app as app
 from . import models
 from django.utils import timezone
-
+import random
+import urllib.request
 
 from . import follower_descriptions_search
 '''
@@ -39,17 +39,27 @@ def task_get_follower_ids(self, uni_handle):
 
 @app.task(bind=True)
 def task_get_followers_data(self, graduate_id):
-    data = follower_descriptions_search.get_followers_data(graduate_id)
 
-    # Save results and queue GetDescriptionTasks
     try:
-        graduate = models.Graduate.objects.get(id = graduate_id)
-    except models.Graduate.DoesNotExist:
-        graduate = models.Graduate(id = graduate_id)
+        data = follower_descriptions_search.get_followers_data(graduate_id)
 
-    if graduate.last_refresh == None or graduate.last_refresh < timezone.now() - timedelta(days = 1):
+        # Save results and queue GetDescriptionTasks
+        try:
+            graduate = models.Graduate.objects.get(id = graduate_id)
+        except models.Graduate.DoesNotExist:
+            graduate = models.Graduate(id = graduate_id)
 
-        graduate.name = data[0]['name']
-        graduate.description = data[0]['description']
-        graduate.last_refresh = datetime.now()
-        graduate.save()
+        if graduate.last_refresh == None or graduate.last_refresh < timezone.now() - timedelta(days = 1):
+
+            graduate.name = data[0]['name']
+            graduate.description = data[0]['description']
+            graduate.last_refresh = datetime.now()
+            graduate.save()
+
+    except urllib.error.HTTPError as e:
+        print("task_get_followers_data failed for user {0}. Exception: {1}".format(graduate_id, e.msg))
+
+        # 429 means Too Many Requests
+        if e.code == 429:
+            self.retry(exc=e,
+                       countdown=int(60 * (2 ** self.request.retries) ))
