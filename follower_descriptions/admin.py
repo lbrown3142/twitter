@@ -1,3 +1,6 @@
 from django.contrib import admin
+from . import models
 
-# Register your models here.
+admin.site.register(models.University)
+admin.site.register(models.Graduate)
+admin.site.register(models.UniFollowers)
