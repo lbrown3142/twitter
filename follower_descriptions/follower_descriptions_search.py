@@ -74,6 +74,7 @@ def id_splitter(batch_ids, n):
 
 
 def get_followers_data(follower_ids):
+
     url1 = "https://api.twitter.com/1.1/users/lookup.json"
     params = {
     "oauth_version": "1.0",
