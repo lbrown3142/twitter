@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<form action='/follower_descriptions/search' method='post'>
+<form action='/follower_descriptions/' method='post'>
     {% csrf_token %}
     <label>
         Twitter Handle
@@ -30,26 +30,24 @@
     <label>
         Search Term [3]
     </label>
-    -->
+
 
     <input type='text' name="Search_3" value=''/>
-    <input type="submit" value="Run"/>
+    -->
+    <input type="submit" value="Add"/>
 </form>
-
+<div/>
 <table>
     <thead>
     <tr>
-        <th>user_id</th>
-        <th>screen_name</th>
-        <th>url</th>
+        <th>Handle</th>
+
     </tr>
     </thead>
     <tbody>
-    {% for result in results %}
+    {% for result in organisations %}
     <tr>
-        <td>{{ result.user_id }}</td>
-        <td>{{ result.screen_name }}</td>
-        <td>{{ result.url }}</td>
+        <td>{{ result.uni_handle }}</td
     </tr>
     {% endfor %}
     </tbody>

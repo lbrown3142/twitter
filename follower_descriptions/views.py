@@ -5,13 +5,24 @@ from django.views.generic import TemplateView
 from . import follower_descriptions_search, tasks
 import twitter
 import celery
+from . import models
+
 
 # Create your views here.
 def search(request):
 
-    twitter_handle = request.POST["twitter_handle"]
-    t = tasks.task_get_follower_ids.delay(twitter_handle)
+    try:
+        twitter_handle = request.POST["twitter_handle"]
 
+        try:
+            university = models.University.objects.get(uni_handle = twitter_handle)
+        except models.University.DoesNotExist:
+            university = models.University(uni_handle = twitter_handle)
+            university.save()
+
+        tasks.task_get_follower_ids.delay(twitter_handle)
+    except Exception as e:
+        pass
 
     # Retrieve tasks
     # Reference: http://docs.celeryproject.org/en/latest/reference/celery.events.state.html
@@ -37,5 +48,20 @@ def search(request):
     context = { "results": results[0] }
     '''
 
-    context = {}
+    context = { 'organisations': models.University.objects.all() }
+
+
+
     return render(request, 'follower_descriptions/search_form.html', context)
+
+def test(request):
+
+    data = {}
+    data['id'] = 999
+    data['category'] = 'physics'
+    data['screen_name'] = 'Lewis Brown'
+    data['url'] = 'lewis.brown@example.com'
+    data['user_description'] = "test data"
+    data['followed_uni_handle'] = 'sheffielduni'
+
+    tasks.task_upload_to_kibana(data)

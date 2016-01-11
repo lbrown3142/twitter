@@ -6,7 +6,9 @@ from . import views
 
 urlpatterns = [
 
-    url(r'^$', TemplateView.as_view(template_name='follower_descriptions/search_form.html')),
-    url(r'search$', follower_descriptions.views.search)
+    url(r'^$', follower_descriptions.views.search),
+    #url(r'search$', follower_descriptions.views.search)
 
+
+    url(r'^test$', follower_descriptions.views.test),
 ]

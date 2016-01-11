@@ -4,7 +4,7 @@ from django.db import models
 
 class University(models.Model):
     uni_handle = models.CharField(max_length = 32, primary_key=True)
-    last_refresh = models.DateTimeField()
+    last_refresh = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return self.uni_handle
