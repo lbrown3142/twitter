@@ -1,18 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
+{% block content %}
 <form action='/follower_descriptions/' method='post'>
     {% csrf_token %}
     <label>
-        Twitter Handle
+        Add Twitter Handle:
     </label>
     <input type='text' name="twitter_handle" value=''/>
-    <br>
+
 
     <!--
     <label>
@@ -36,11 +31,11 @@
     -->
     <input type="submit" value="Add"/>
 </form>
-<div/>
+<p/>
 <table>
     <thead>
     <tr>
-        <th>Handle</th>
+        <th>Handles:</th>
 
     </tr>
     </thead>
@@ -53,5 +48,4 @@
     </tbody>
 </table>
 
-</body>
-</html>
+{% endblock %}
