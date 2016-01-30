@@ -124,17 +124,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
-
-'''
-REDIS setup
-import djcelery
-djcelery.setup_loader()
-BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-'''
+STATIC_ROOT = '/home/steve/Desktop/twitter2/twitter/static'
 
 import djcelery
 djcelery.setup_loader()
