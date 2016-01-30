@@ -17,8 +17,10 @@ Including another URLconf
 
 from django.contrib import admin
 from django.conf.urls import url, include
+from django.views.generic import RedirectView
 
 urlpatterns = [
+    url(r'^$', RedirectView.as_view(url='follower_descriptions/'), ),
     url(r'^admin/', admin.site.urls),
     url(r'^follower_descriptions/', include('follower_descriptions.urls', namespace = 'follower_descriptions'))
 ]
