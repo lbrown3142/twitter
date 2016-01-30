@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 
+ADMINS = (
+    ('Lewis Brown', 'lewis.brown@capgemini.com'),
+)
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -59,7 +63,7 @@ ROOT_URLCONF = 'twitter.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates', 'follower_descriptions/templates'],
+        'DIRS': [os.path.join(BASE_DIR,'templates'), 'follower_descriptions/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -71,6 +75,10 @@ TEMPLATES = [
         },
     },
 ]
+
+#TEMPLATE_DIRS = (
+#  '/home/steve/Desktop/twitter2/twitter/templates',
+#)
 
 WSGI_APPLICATION = 'twitter.wsgi.application'
 
@@ -124,8 +132,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
-STATIC_ROOT = '/home/steve/Desktop/twitter2/twitter/static'
+#STATIC_ROOT = '/home/steve/Desktop/twitter2/twitter/static'
 
-import djcelery
-djcelery.setup_loader()
-BROKER_URL = 'amqp://'
+#import djcelery
+#djcelery.setup_loader()
+#BROKER_URL = 'amqp://'
