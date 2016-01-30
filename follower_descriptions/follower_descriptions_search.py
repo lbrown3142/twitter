@@ -5,7 +5,7 @@ import time
 import urllib.request
 import json
 
-def get_follower_ids(uni_handle):
+def get_follower_ids(uni_handle, cursor):           #75k per 15 mins
     url1 = "https://api.twitter.com/1.1/followers/ids.json"
     params = {
     "oauth_version": "1.0",
@@ -28,52 +28,51 @@ def get_follower_ids(uni_handle):
     params["screen_name"] = uni_handle
 
 
-    cursor = -1
+
     num_attempts = 0
     results = []
-    while cursor != 0:
-
-        num_attempts += 1
-        params["cursor"] = cursor
-
-        req = oauth2.Request(method="GET", url=url1, parameters=params)
-        signature_method = oauth2.SignatureMethod_HMAC_SHA1()
-        req.sign_request(signature_method, consumer, token)
-        url = req.to_url()
-        response = urllib.request.urlopen(url)
-        data = response.read().decode('utf-8')
-        data = json.loads(data)
-
-        cursor = data["next_cursor"]
-        results = results + data["ids"]
 
 
+    num_attempts += 1
+    params["cursor"] = cursor
 
-        if num_attempts == 15:
-            #print "ID limit reached, sleeping for 15 minutes"
-            num_attempts = 0
-            time.sleep(930)
+    req = oauth2.Request(method="GET", url=url1, parameters=params)
+    signature_method = oauth2.SignatureMethod_HMAC_SHA1()
+    req.sign_request(signature_method, consumer, token)
+    url = req.to_url()
+    response = urllib.request.urlopen(url)
+    data = response.read().decode('utf-8')
+    data = json.loads(data)
 
-        break;
+    cursor = data["next_cursor"]
+    results = results + data["ids"]
+
+
+
+    #if num_attempts == 15:
+        #print "ID limit reached, sleeping for 15 minutes"
+        #num_attempts = 0
+        #time.sleep(930)
+
+        #need to upload first batch and start a new task for second batch so it uploads results in real time instead of waiting
+
+
+
+    #    break
         #print "data: " + str(len(data["ids"]))
         #print "results: " + str(len(results))
         #print num_attempts
         #time.sleep(3)
 
     #print "final result: " + str(len(results))
-    return results
+    return results, cursor
 
 
 
 
 
-def id_splitter(batch_ids, n):
-    return [batch_ids[i:i + n] for i in range(0, len(batch_ids), n)]
 
-
-
-
-def get_followers_data(follower_ids):
+def get_followers_data(follower_ids):   #18k per 15 mins
 
     url1 = "https://api.twitter.com/1.1/users/lookup.json"
     params = {
@@ -117,6 +116,9 @@ def search_distribute(json_list, uni_handle, query):
     results = []
 
     for people in json_list:
+        if len(people["description"]) < 6:
+            continue
+
         description = (people["description"].encode("utf-8", errors="ignore")).lower()
 
         for search_term in query:
@@ -128,27 +130,5 @@ def search_distribute(json_list, uni_handle, query):
                 throw
 
     return results
-
-def DoSearch(uni_handle, search_terms):
-    count = 0
-    results = []
-
-    user_ids = get_follower_ids(uni_handle)
-    split_ids = id_splitter(user_ids, 100)
-    for people in split_ids:
-        count += 1
-        if count == 30:
-            count = 0
-            # print" search limit reached, sleeping for 15 minutes"
-            # time.sleep(930)
-            return results
-
-        followers_data = get_followers_data(people)
-        result = search_distribute(followers_data, uni_handle, search_terms)
-        if result:
-            results.append(result)
-
-    return results
-
 
 
