@@ -120,6 +120,11 @@ pip install -r requirements.txt
 		default-character-set=utf8
 
 		[mysqld]
+		character-set-server = utf8
+		collation-server = utf8_unicode_ci
+		init-connect='SET NAMES utf8'
+
+		[mysql]
 		default-character-set = utf8
 
 
