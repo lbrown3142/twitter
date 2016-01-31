@@ -20,7 +20,7 @@ or:
 >>> i.active()
 '''
 
-aws = "54.194.146.38"
+aws = "localhost"
 
 twitter_ids = 0;
 twitter_data = 0;
