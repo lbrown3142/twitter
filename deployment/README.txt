@@ -25,6 +25,23 @@ Elastic Search:
 	sudo vim /etc/elasticsearch/elasticsearch.yml
 		-> network.host: localhost
 
+    # Limit memory usage:
+		/etc/security/limits.conf:
+			elasticsearch - nofile 65535
+			elasticsearch - memlock unlimited
+
+		/etc/default/elasticsearch:
+			ES_HEAP_SIZE=128m
+			MAX_OPEN_FILES=65535
+			MAX_LOCKED_MEMORY=unlimited
+
+		/etc/elasticsearch/elasticsearch.yml:
+			bootstrap.mlockall: true
+
+	sudo service elasticsearch restart
+	sudo update-rc.d elasticsearch defaults 95 10
+
+
 	sudo service elasticsearch restart
 	sudo update-rc.d elasticsearch defaults 95 10
 
@@ -188,7 +205,7 @@ pip install -r requirements.txt
 		CELERYCTL="$ENV_PYTHON $CELERYD_CHDIR/manage.py celeryctl"
 
 		# Extra arguments to celeryd
-		CELERYD_OPTS="--time-limit=300 --concurrency=8"
+		CELERYD_OPTS="--time-limit=300 --concurrency=3"
 
 		# Name of the celery config module.
 		CELERY_CONFIG_MODULE="celeryconfig"

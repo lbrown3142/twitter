@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.generic import TemplateView
@@ -9,6 +10,7 @@ from . import models
 
 
 # Create your views here.
+@login_required
 def search(request):
 
     try:
