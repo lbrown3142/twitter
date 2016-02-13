@@ -70,6 +70,8 @@ def task_get_follower_ids(self, uni_handle, cursor=-1):
 @app.task(bind=True)
 def task_get_followers_data(self, id_list, uni_handle):
     try:
+        university = models.University.objects.get(uni_handle=uni_handle)
+
         results = follower_descriptions_search.get_followers_data(id_list)
 
         for data in results:
@@ -78,12 +80,12 @@ def task_get_followers_data(self, id_list, uni_handle):
             except models.Graduate.DoesNotExist:
                 graduate = models.Graduate(id=data['id'])
 
-
-
             if len(data['description']) > 6:
                 graduate.name = data['name']
                 graduate.description = data['description']
                 graduate.last_refresh = timezone.now()
+                graduate.save() # Need to save before adding relationship
+                graduate.following.add(university)
                 graduate.save()
 
                 data['followed_uni_handle'] = uni_handle

@@ -32,17 +32,19 @@
     <input type="submit" value="Add"/>
 </form>
 <p/>
-<table>
+<table class="table">
     <thead>
     <tr>
         <th>Handles:</th>
+        <th>Followers:</th>
 
     </tr>
     </thead>
     <tbody>
     {% for result in organisations %}
     <tr>
-        <td>{{ result.uni_handle }}</td
+        <td>{{ result.uni_handle }}</td>
+        <td>{{ result.num_followers }}</td>
     </tr>
     {% endfor %}
     </tbody>

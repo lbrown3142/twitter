@@ -14,11 +14,15 @@ class Graduate(models.Model):
     last_refresh = models.DateTimeField()
     description = models.CharField(max_length = 4096, default='')
     name = models.CharField(max_length = 128, default='')
+    following = models.ManyToManyField(University)
 
     def __str__(self):
         return self.name
 
+# Defunct - remove at some point
 class UniFollowers(models.Model):
     university = models.ForeignKey(University)
     graduate = models.ForeignKey(Graduate)
 
+    def __str__(self):
+        return self.university.uni_handle

@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.generic import TemplateView
+from django.db.models import Count
 
 from . import follower_descriptions_search, tasks
 import twitter
@@ -50,10 +51,10 @@ def search(request):
     context = { "results": results[0] }
     '''
 
-    context = { 'organisations': models.University.objects.all() }
+    # Get the universities, with a count of how many graduates are following them
+    followers = models.University.objects.annotate(num_followers=Count('graduate'))
 
-
-
+    context = { 'organisations': followers }
     return render(request, 'follower_descriptions/search_form.html', context)
 
 def test(request):
