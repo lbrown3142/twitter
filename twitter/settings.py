@@ -95,7 +95,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'twitter_db',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'Capgemini1',
         'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
         'PORT': '3306',
     }
@@ -145,4 +145,4 @@ LOGOUT_URL = '/logout'
 LOGIN_REDIRECT_URL = '/follower_descriptions'
 
 # Enable this to cause celery to run in the same thread as the main app, so we can then debug tasks
-CELERY_ALWAYS_EAGER = True
+#CELERY_ALWAYS_EAGER = True
