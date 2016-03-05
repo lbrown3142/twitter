@@ -15,7 +15,7 @@ from elasticsearch_dsl import Search, Q
 
 # Create your views here.
 @login_required
-def search(request):
+def search_following(request):
 
     try:
         twitter_handle = request.POST["twitter_handle"]
@@ -58,7 +58,7 @@ def search(request):
     followers = models.University.objects.annotate(num_followers=Count('graduate'))
 
     context = { 'organisations': followers }
-    return render(request, 'follower_descriptions/search_form.html', context)
+    return render(request, 'follower_descriptions/search_following.html', context)
 
 def search_followers(request):
 
