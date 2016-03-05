@@ -13,7 +13,8 @@
 <table class="table">
     <thead>
     <tr>
-        <th>Handles:</th>
+        <th>Handle:</th>
+        <th>Name:</th>
         <th>Followers:</th>
 
     </tr>
@@ -22,6 +23,7 @@
     {% for result in organisations %}
     <tr>
         <td>{{ result.uni_handle }}</td>
+        <td>{{ result.name }}</td>
         <td>{{ result.num_followers }}</td>
     </tr>
     {% endfor %}

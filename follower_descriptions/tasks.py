@@ -36,6 +36,9 @@ def task_get_follower_ids(self, uni_handle, cursor=-1):
 
         if cursor == -1 and ( university.last_refresh == None or university.last_refresh < timezone.now() - timedelta(days=1)):
             if cursor == -1:
+                uni_data = follower_descriptions_search.get_users_by_screen_name([uni_handle])
+                name = uni_data[0]['name']
+                university.name = name
                 university.last_refresh = timezone.now()
                 university.save()
 
