@@ -7,8 +7,7 @@ from . import views
 urlpatterns = [
 
     url(r'^$', follower_descriptions.views.search),
-    #url(r'search$', follower_descriptions.views.search)
-
+    url(r'^search_followers', follower_descriptions.views.search_followers),
 
     url(r'^test$', follower_descriptions.views.test),
 ]

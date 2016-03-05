@@ -9,6 +9,9 @@ import twitter
 import celery
 from . import models
 
+from elasticsearch import Elasticsearch
+from elasticsearch_dsl import Search, Q
+
 
 # Create your views here.
 @login_required
@@ -57,14 +60,87 @@ def search(request):
     context = { 'organisations': followers }
     return render(request, 'follower_descriptions/search_form.html', context)
 
+def search_followers(request):
+
+    search_term = ''
+    response = {}
+    cursor = 0
+    cursor_end = 0
+    page_size = 10
+    count = 0
+    next_disabled = ""
+    previous_disabled = ""
+
+    try:
+        search_term = request.POST["search_term"]
+
+        # Get the cursor value
+        cursor = int(request.POST["cursor"])
+        if "search" in request.POST:
+            cursor = 0
+
+        if "next" in request.POST:
+            cursor += page_size
+
+        if "previous" in request.POST:
+            cursor -= page_size
+
+        # See http://elasticsearch-dsl.readthedocs.org/en/latest/search_dsl.html
+        client = Elasticsearch('localhost')
+
+        s = Search(using=client, index="my_index") \
+            .query("match", user_description=search_term)
+
+        if (cursor < 0):
+            cursor = 0
+
+        cursor_end = cursor + page_size
+        s = s[cursor:cursor_end]
+
+        response = s.execute(ignore_cache=True)
+
+        count = response.hits.total
+
+        if cursor_end > count:
+            cursor_end = count
+
+        if cursor == 0:
+            previous_disabled = "disabled"
+
+        if cursor_end == count:
+            next_disabled = "disabled"
+
+    except Exception as e:
+        pass
+
+    context = { 'search_term':search_term,
+                'followers':response,
+                'page_size':page_size,
+                'cursor':cursor,
+                'cursor_end':cursor_end,
+                'count': count,
+                'previous_disabled':previous_disabled,
+                'next_disabled':next_disabled,}
+
+    return render(request, 'follower_descriptions/search_followers.html', context)
+
 def test(request):
 
-    data = {}
-    data['id'] = 999
-    data['category'] = 'physics'
-    data['screen_name'] = 'Lewis Brown'
-    data['url'] = 'lewis.brown@example.com'
-    data['user_description'] = "test data"
-    data['followed_uni_handle'] = 'sheffielduni'
+    client = Elasticsearch('localhost')
 
-    tasks.task_upload_to_kibana(data)
+    s = Search(using=client, index="my_index") \
+        .query("match", user_description="maths") #   \
+        #.query(~Q("match", description="Professor"))
+
+    #.filter("term", category="user_description") \
+
+    #s.aggs.bucket('per_tag', 'terms', field='tags') \
+    #    .metric('max_lines', 'max', field='lines')
+
+    response = s.execute(ignore_cache=True)
+
+    for hit in s.scan():
+        print(hit)
+
+    #for tag in response.aggregations.per_tag.buckets:
+    #    print(tag.key, tag.max_lines.value)
