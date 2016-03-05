@@ -14,8 +14,9 @@ Including another URLconf
     2. Import the include() function: from django.conf.urls import url, include
     3. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
-
+import django
 from django.contrib import admin
+from django.contrib.auth.views import login
 from django.conf.urls import url, include
 from django.views.generic import RedirectView
 
@@ -23,6 +24,6 @@ urlpatterns = [
     url(r'^$', RedirectView.as_view(url='search/'), ),
     url(r'^admin/', admin.site.urls),
     url(r'^search/', include('follower_descriptions.urls', namespace = 'follower_descriptions')),
-    url(r'^login$', 'django.contrib.auth.views.login', name='login'),
-    url(r'^logout$', 'django.contrib.auth.views.logout', {'next_page': 'login'}, name='logout'),
+    url(r'^login$', django.contrib.auth.views.login, name='login'),
+    url(r'^logout$', django.contrib.auth.views.logout, {'next_page': 'login'}, name='logout'),
 ]

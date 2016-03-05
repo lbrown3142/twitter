@@ -59,7 +59,7 @@ def task_get_follower_ids(self, uni_handle, cursor=-1):
             # Spawn a task to fetch up to 100 followers
             task_get_followers_data.delay(data, uni_handle)
 
-
+        print("task_get_follower_ids succeeded: " + uni_handle)
 
 
 
@@ -96,6 +96,8 @@ def task_get_followers_data(self, id_list, uni_handle):
 
                 task_upload_to_kibana.delay(data)
 
+        print("task_get_followers_data succeeded: " + uni_handle)
+
     except urllib.error.HTTPError as e:
         print("task_get_followers_data failed. Exception: {0}".format(e.msg))
 
@@ -120,6 +122,8 @@ def task_upload_to_kibana(self, data):
 
         with urllib.request.urlopen(req) as f:
             pass
+
+        print("task_upload_to_kibana succeeded: " + data['screen_name'])
 
     except urllib.error.HTTPError as e:
         print("task_upload_to_kibana failed. Exception: {0}".format(e.msg))

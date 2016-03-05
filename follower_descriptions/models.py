@@ -8,7 +8,7 @@ class University(models.Model):
     name = models.CharField(max_length = 1024, default="")
 
     def __str__(self):
-        return self.name
+        return self.uni_handle + ': ' + self.name
 
 class Graduate(models.Model):
     id = models.BigIntegerField(primary_key=True)

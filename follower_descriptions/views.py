@@ -7,6 +7,8 @@ from django.db.models import Count
 from . import follower_descriptions_search, tasks
 import twitter
 import celery
+from celery.task.control import inspect
+
 from . import models
 
 from elasticsearch import Elasticsearch
@@ -123,6 +125,26 @@ def search_followers(request):
                 'next_disabled':next_disabled,}
 
     return render(request, 'follower_descriptions/search_followers.html', context)
+
+def CeleryStats(request):
+
+    i = inspect()
+    active = i.active()
+    registered = i.registered()
+    scheduled = i.scheduled()
+    reserved = i.reserved()
+
+    active_count = 0
+    for queue in active:
+        active_count += len(active[queue])
+
+    scheduled_count = 0
+    for queue in scheduled:
+        scheduled_count += len(scheduled[queue])
+        break
+
+    context = { 'active_count':active_count, 'scheduled_count':scheduled_count}
+    return render(request, 'follower_descriptions/stats.html', context)
 
 def test(request):
 
