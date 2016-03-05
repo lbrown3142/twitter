@@ -5,9 +5,9 @@ import follower_descriptions
 from . import views
 
 urlpatterns = [
-    url(r'^$', RedirectView.as_view(url='followers/'), ),
-    url(r'^following$', follower_descriptions.views.search_following),
-    url(r'^followers$', follower_descriptions.views.search_followers),
+    url(r'^$', RedirectView.as_view(url='users'), ),
+    url(r'^organisations$', follower_descriptions.views.search_following),
+    url(r'^users$', follower_descriptions.views.search_followers),
 
     url(r'^test$', follower_descriptions.views.test),
 ]

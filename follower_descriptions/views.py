@@ -13,7 +13,6 @@ from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search, Q
 
 
-# Create your views here.
 @login_required
 def search_following(request):
 
@@ -60,6 +59,7 @@ def search_following(request):
     context = { 'organisations': followers }
     return render(request, 'follower_descriptions/search_following.html', context)
 
+@login_required
 def search_followers(request):
 
     search_term = ''
