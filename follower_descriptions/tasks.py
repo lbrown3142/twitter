@@ -28,6 +28,7 @@ twitter_data = 0;
 kibana_uploads = 0;
 
 def log(message):
+    print(message)
     try:
         if settings.CAPGEMINI_LOG == True:
             with open('/var/log/capgemini/tasks.log', 'a') as the_file:
@@ -38,6 +39,7 @@ def log(message):
 
 @app.task(bind=True)
 def task_get_follower_ids(self, uni_handle, cursor=-1):
+    log('task_get_follower_ids ' + uni_handle + "...")
     try:
         try:
             university = models.University.objects.get(uni_handle=uni_handle)
@@ -74,16 +76,15 @@ def task_get_follower_ids(self, uni_handle, cursor=-1):
             # Spawn a task to fetch up to 100 followers
             task_get_followers_data.delay(data, uni_handle)
 
-        print("task_get_follower_ids succeeded: " + uni_handle)
-
-
+        log('task_get_follower_ids ' + uni_handle + "...done")
 
     except urllib.error.HTTPError as e:
-        print("task_get_follower_ids failed. Exception: {0}".format(e.msg))
 
         # 429 means Too Many Requests
         if e.code == 429:
             self.retry(exc=e, countdown=int(1000))
+        else:
+            log('task_get_follower_ids ' + uni_handle + "... exception: " + e.msg)
 
 @app.task(bind=True)
 def task_get_followers_data(self, id_list, uni_handle):
