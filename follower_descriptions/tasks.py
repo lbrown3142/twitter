@@ -113,7 +113,7 @@ def task_upload_to_kibana(self, data):
 
         payload = '{"index": {"_id" : "' + str(data['id']) + '"}}\n'
         payload += '{"category": "' + data['category'] + '", "screen_name":"' + data['screen_name'] + '",'
-        payload += '"url":"' + data['url'] + '", "user_description":"' + data['description'] + '",'
+        payload += '"url":"' + str(data['url']) + '", "user_description":"' + data['description'] + '",'
         payload += '"followed_uni_handle":"' + data['followed_uni_handle'] + '"}\n'
 
         req = urllib.request.Request(url='http://' + aws + ':9200/my_index/twitter/_bulk',

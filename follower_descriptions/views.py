@@ -40,21 +40,6 @@ def search_following(request):
     #for uuid, task in query:
     #    celery.control.revoke(uuid, terminate=True)
 
-
-
-    # http://52.31.43.191:5601
-
-    '''
-    search_terms = []
-    search_terms.append(request.POST["Search_1"])
-    twitter_handle = request.POST["twitter_handle"]
-
-    results = follower_descriptions_search.DoSearch(twitter_handle, search_terms)
-
-    #return JsonResponse(results, safe=False)
-    context = { "results": results[0] }
-    '''
-
     # Get the universities, with a count of how many graduates are following them
     followers = models.University.objects.annotate(num_followers=Count('graduate'))
 
@@ -90,8 +75,11 @@ def search_followers(request):
         # See http://elasticsearch-dsl.readthedocs.org/en/latest/search_dsl.html
         client = Elasticsearch('localhost')
 
+        #s = Search(using=client, index="my_index") \
+        #    .query("match", user_description=search_term)
+
         s = Search(using=client, index="my_index") \
-            .query("match", user_description=search_term)
+            .query("multi_match", query=search_term, fields=['user_description','screen_name'])
 
         if (cursor < 0):
             cursor = 0
