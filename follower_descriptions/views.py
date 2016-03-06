@@ -14,6 +14,7 @@ from . import models
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search, Q
 
+from twitter import settings
 
 @login_required
 def search_following(request):
@@ -146,22 +147,9 @@ def CeleryStats(request):
     return render(request, 'follower_descriptions/stats.html', context)
 
 def test(request):
+    tasks.log('Launching task_test...')
+    tasks.task_test.delay()
+    tasks.log('Launching task_test...done')
+    context = {'test_count':''}
 
-    client = Elasticsearch('localhost')
-
-    s = Search(using=client, index="my_index") \
-        .query("match", user_description="maths") #   \
-        #.query(~Q("match", description="Professor"))
-
-    #.filter("term", category="user_description") \
-
-    #s.aggs.bucket('per_tag', 'terms', field='tags') \
-    #    .metric('max_lines', 'max', field='lines')
-
-    response = s.execute(ignore_cache=True)
-
-    for hit in s.scan():
-        print(hit)
-
-    #for tag in response.aggregations.per_tag.buckets:
-    #    print(tag.key, tag.max_lines.value)
+    return render(request, 'follower_descriptions/tests.html', context)

@@ -161,3 +161,8 @@ def task_upload_to_kibana(self, data):
            # print('EXCEPTION: ' + str(e))
             pprint.pprint(data)
             retry -= 1
+
+@app.task(bind=True)
+def task_test(self):
+    log('task_test...')
+    log('task_test...done')

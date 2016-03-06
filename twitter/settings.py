@@ -148,3 +148,4 @@ CAPGEMINI_LOG = True
 
 # Enable this to cause celery to run in the same thread as the main app, so we can then debug tasks
 #CELERY_ALWAYS_EAGER = True
+
