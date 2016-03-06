@@ -8,6 +8,7 @@ import random
 import urllib.request
 import pprint
 from . import follower_descriptions_search
+from twitter import settings
 
 '''
 from celery.task.control import inspect
@@ -26,6 +27,15 @@ twitter_ids = 0;
 twitter_data = 0;
 kibana_uploads = 0;
 
+def log(message):
+    try:
+        if settings.CAPGEMINI_LOG == True:
+            with open('/var/log/capgemini/tasks.log', 'a') as the_file:
+                the_file.write(message + '\n')
+    except Exception as e:
+        pass
+
+
 @app.task(bind=True)
 def task_get_follower_ids(self, uni_handle, cursor=-1):
     try:
@@ -38,9 +48,14 @@ def task_get_follower_ids(self, uni_handle, cursor=-1):
             if cursor == -1:
                 uni_data = follower_descriptions_search.get_users_by_screen_name([uni_handle])
                 name = uni_data[0]['name']
+
+                log('Saving uni name: ' + uni_handle + ', ' + name + '...')
+
                 university.name = name
                 university.last_refresh = timezone.now()
                 university.save()
+
+                log('Saving uni name: ' + uni_handle + ', ' + name + '...done')
 
         results, cursor = follower_descriptions_search.get_follower_ids(uni_handle, cursor)
 
@@ -109,30 +124,39 @@ def task_get_followers_data(self, id_list, uni_handle):
 
 @app.task(bind=True)
 def task_upload_to_kibana(self, data):
-    try:
 
-        payload = '{"index": {"_id" : "' + str(data['id']) + '"}}\n'
-        payload += '{"category": "' + data['category'] + '", "screen_name":"' + data['screen_name'] + '",'
-        payload += '"url":"' + str(data['url']) + '", "user_description":"' + data['description'] + '",'
-        payload += '"followed_uni_handle":"' + data['followed_uni_handle'] + '"}\n'
+    retry = 2
+    while retry > 0:
 
-        req = urllib.request.Request(url='http://' + aws + ':9200/my_index/twitter/_bulk',
-                                     data=payload.encode('utf-8'),
-                                     method='PUT')
+        try:
 
-        with urllib.request.urlopen(req) as f:
-            pass
+            description = data['description']
+            #description = description.replace("\\", "\\\\")
 
-        print("task_upload_to_kibana succeeded: " + data['screen_name'])
+            payload = '{"index": {"_id" : "' + str(data['id']) + '"}}\n'
+            payload += '{"category": "' + data['category'] + '", "screen_name":"' + data['screen_name'] + '",'
+            payload += '"url":"' + str(data['url']) + '", "user_description":"' + description + '",'
+            payload += '"followed_uni_handle":"' + data['followed_uni_handle'] + '"}\n'
 
-    except urllib.error.HTTPError as e:
-        print("task_upload_to_kibana failed. Exception: {0}".format(e.msg))
+            req = urllib.request.Request(url='http://' + aws + ':9200/my_index/twitter/_bulk',
+                                         data=payload.encode('utf-8'),
+                                         method='PUT')
 
-        # 429 means Too Many Requests
-        if e.code == 429:
-            self.retry(exc=e,
-                       countdown=int(60 * (2 ** self.request.retries)))
+            with urllib.request.urlopen(req) as f:
+                pass
 
-    except Exception as e:
-       # print('EXCEPTION: ' + str(e))
-        pprint.pprint(data)
+            print("task_upload_to_kibana succeeded: " + data['screen_name'])
+            retry = 0
+        except urllib.error.HTTPError as e:
+            print("task_upload_to_kibana failed. Exception: {0}".format(e.msg))
+
+            # 429 means Too Many Requests
+            if e.code == 429:
+                self.retry(exc=e,
+                           countdown=int(60 * (2 ** self.request.retries)))
+
+            retry -= 1
+        except Exception as e:
+           # print('EXCEPTION: ' + str(e))
+            pprint.pprint(data)
+            retry -= 1

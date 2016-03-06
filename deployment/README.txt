@@ -323,3 +323,7 @@ tail -f /var/log/celery/worker.log
 # Uncheck "Index contains time-based events
 # Enter my_index
 
+
+# Create log directory
+sudo mkdir /var/log/capgemini
+sudo chmod 777 /var/log/capgemini

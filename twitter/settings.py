@@ -144,5 +144,7 @@ LOGIN_URL = '/login'
 LOGOUT_URL = '/logout'
 LOGIN_REDIRECT_URL = '/'
 
+CAPGEMINI_LOG = True
+
 # Enable this to cause celery to run in the same thread as the main app, so we can then debug tasks
-CELERY_ALWAYS_EAGER = True
+#CELERY_ALWAYS_EAGER = True
