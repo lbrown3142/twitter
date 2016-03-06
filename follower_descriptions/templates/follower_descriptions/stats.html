@@ -2,7 +2,8 @@
 
 {% block content %}
 
-<p>Tasks</p>
+<h1>Tasks</h1>
+<h2>Summary</h2>
 
 <table class="table">
     <thead>
@@ -25,6 +26,69 @@
         <td>Retrying</td>
         <td>{{ scheduled_count }}</td>
     </tr>
+    </tbody>
+</table>
+
+<h2>Details</h2>
+
+<h3>Active:</h3>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Name:</th>
+        <th>Args:</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for task in active %}
+    <tr>
+        <td>{{ task.name }}</td>
+        <td>{{ task.args }}</td>
+    </tr>
+    {% endfor %}
+
+    </tbody>
+</table>
+
+<h3>New:</h3>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Name:</th>
+        <th>Args:</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    {% for task in reserved %}
+    <tr>
+        <td>{{ task.name }}</td>
+        <td>{{ task.args }}</td>
+    </tr>
+    {% endfor %}
+
+    </tbody>
+</table>
+
+<h3>Retrying:</h3>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Scheduled:</th>
+        <th>Name:</th>
+        <th>Args:</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    {% for task in scheduled %}
+    <tr>
+        <td>{{ task.eta }}</td>
+        <td>{{ task.request.name }}</td>
+        <td>{{ task.request.args }}</td>
+    </tr>
+    {% endfor %}
+
     </tbody>
 </table>
 

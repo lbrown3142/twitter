@@ -126,26 +126,29 @@ def CeleryStats(request):
     reserved = i.reserved()
 
     # These are tasks running now
-    active_count = 0
+    active_queues = []
     if active:
         for queue in active:
-            active_count += len(active[queue])
+            active_queues += active[queue]
 
     # These are tasks which have failed at least once and have been rescheduled to run again
-    scheduled_count = 0
+    scheduled_queues = []
     if scheduled:
         for queue in scheduled:
-            scheduled_count += len(scheduled[queue])
+            scheduled_queues += scheduled[queue]
 
     # These are tasks that have been received but not yet had a chance to run
-    reserved_count = 0
+    reserved_queues = []
     if reserved:
         for queue in reserved:
-            reserved_count += len(reserved[queue])
+            reserved_queues += reserved[queue]
 
-    context = { 'active_count':active_count,
-                'scheduled_count':scheduled_count,
-                'reserved_count':reserved_count}
+    context = { 'active_count':len(active_queues),
+                'scheduled_count':len(scheduled_queues),
+                'reserved_count':len(reserved_queues),
+                'active':active_queues,
+                'scheduled':scheduled_queues,
+                'reserved':reserved_queues}
 
     return render(request, 'follower_descriptions/stats.html', context)
 
