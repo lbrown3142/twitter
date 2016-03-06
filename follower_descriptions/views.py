@@ -22,6 +22,7 @@ def search_following(request):
     try:
         twitter_handle = request.POST["twitter_handle"]
 
+        tasks.log('search_following ' + twitter_handle + '...')
         try:
             university = models.University.objects.get(uni_handle = twitter_handle)
         except models.University.DoesNotExist:
@@ -29,6 +30,8 @@ def search_following(request):
             university.save()
 
         tasks.task_get_follower_ids.delay(twitter_handle)
+
+        tasks.log('search_following ' + twitter_handle + '...done')
     except Exception as e:
         pass
 
