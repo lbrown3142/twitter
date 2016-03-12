@@ -145,13 +145,11 @@ def task_upload_to_kibana(self, data):
 
             description = data['description']
 
-            #description = 'SteveBrown3141\nBrownQuote"Quote'
-
             # We need to escape newlines because they have special meaning for the elasticsearch API
             description = description.replace('\n', '\\n')
 
             # and quotes " escaped as \\"
-            #description = description.replace('"', '\\"')
+            description = description.replace('"', '\\"')
 
             payload = '{"index": {"_id" : "' + str(data['id']) + '"}}\n'
             payload += '{"category": "' + data['category'] + '", "screen_name":"' + data['screen_name'] + '",'
