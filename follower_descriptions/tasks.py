@@ -58,23 +58,23 @@ def task_get_follower_ids(self, uni_handle, cursor=-1):
         except models.University.DoesNotExist:
             university = models.University(uni_handle=uni_handle)
 
-        if cursor == -1 and ( university.last_refresh == None or university.last_refresh < timezone.now() - timedelta(days=1)):
-            if cursor == -1:
+        if cursor == -1:
+            # First call into the recursion
+            if university.last_refresh == None or university.last_refresh < timezone.now() - timedelta(days=7):
+                # Get the university name (more descriptive than its handle)
                 uni_data = follower_descriptions_search.get_users_by_screen_name([uni_handle])
                 name = uni_data[0]['name']
-
-                log('Saving uni name: ' + uni_handle + ', ' + name + '...')
-
                 university.name = name
                 university.last_refresh = timezone.now()
                 university.save()
-
-                log('Saving uni name: ' + uni_handle + ', ' + name + '...done')
+            else:
+                # Nothing to do
+                return
 
         results, cursor = follower_descriptions_search.get_follower_ids(uni_handle, cursor)
 
-
         if cursor != 0:
+            # Recursive call passing in the cursor
             task_get_follower_ids.delay(uni_handle, cursor)
 
         # Process the id's, 100 at a time, by spawning child tasks to get their descriptions.
@@ -144,7 +144,14 @@ def task_upload_to_kibana(self, data):
         try:
 
             description = data['description']
-            #description = description.replace("\\", "\\\\")
+
+            #description = 'SteveBrown3141\nBrownQuote"Quote'
+
+            # We need to escape newlines because they have special meaning for the elasticsearch API
+            description = description.replace('\n', '\\n')
+
+            # and quotes " escaped as \\"
+            #description = description.replace('"', '\\"')
 
             payload = '{"index": {"_id" : "' + str(data['id']) + '"}}\n'
             payload += '{"category": "' + data['category'] + '", "screen_name":"' + data['screen_name'] + '",'
@@ -184,7 +191,7 @@ def minute_updates():
 @periodic_task(run_every=(crontab(minute='*/15'))) # Every 15 minutes
 def quarter_hour_updates():
     log('TASK: quarter_hour_updates')
-    task_periodic_refresh_all_follower_ids.delay()
+
 
 @periodic_task(run_every=(crontab(minute=0))) # Every hour
 def hourly_updates():
@@ -193,6 +200,10 @@ def hourly_updates():
 @periodic_task(run_every=(crontab(minute=0, hour=0))) # Daily at midnight
 def daily_updates():
     log('TASK: daily_updates')
+
+    # Refresh university followers
+    task_periodic_refresh_all_follower_ids.delay()
+
 
 @periodic_task(run_every=(crontab(minute=0, hour=0, day_of_week='sunday')))
 def weekly_updates():

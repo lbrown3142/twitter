@@ -121,14 +121,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Celery Beats
-#CELERYBEAT_SCHEDULE = {
-#    'add-every-30-seconds': {
-#        'task': 'twitter.follower_descriptions.tasks.task_test2',
-#        'schedule': timedelta(seconds=30),
-#        'args': (16, 16)
-#    },
-#}
+MIGRATION_MODULES = {
+    'default': 'twitter.follower_descriptions.migrations',
+}
 
 CELERY_TIMEZONE = 'UTC'
 
@@ -156,8 +151,8 @@ LOGIN_URL = '/login'
 LOGOUT_URL = '/logout'
 LOGIN_REDIRECT_URL = '/'
 
-CAPGEMINI_LOG = True
+CAPGEMINI_LOG = False
 
 # Enable this to cause celery to run in the same thread as the main app, so we can then debug tasks
-CELERY_ALWAYS_EAGER = True
+#CELERY_ALWAYS_EAGER = True
 
