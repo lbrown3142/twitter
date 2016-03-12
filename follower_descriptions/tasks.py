@@ -1,6 +1,10 @@
 from __future__ import absolute_import
 import sys
 from datetime import datetime, timedelta
+
+from celery.schedules import crontab
+from celery.task import periodic_task
+
 from twitter import celery_app as app
 from . import models
 from django.utils import timezone
@@ -166,3 +170,12 @@ def task_upload_to_kibana(self, data):
 def task_test(self):
     log('task_test...')
     log('task_test...done')
+
+def task_test2():
+    log('task_test2...')
+    log('task_test2...done')
+
+@periodic_task(run_every=(crontab(hour="*", minute="*", day_of_week="*")))
+def scraper_example():
+    log('scraper_example...')
+    log('scraper_example...done')
