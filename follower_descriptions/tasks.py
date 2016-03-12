@@ -42,6 +42,14 @@ def log(message):
 
 
 @app.task(bind=True)
+def task_periodic_refresh_all_follower_ids(self):
+    # Check all universities for new followers
+    universities = models.University.objects.all()
+    for uni in universities:
+        task_get_follower_ids.delay(uni.uni_handle)
+
+
+@app.task(bind=True)
 def task_get_follower_ids(self, uni_handle, cursor=-1):
     log('task_get_follower_ids ' + uni_handle + "...")
     try:
@@ -166,16 +174,27 @@ def task_upload_to_kibana(self, data):
             pprint.pprint(data)
             retry -= 1
 
-@app.task(bind=True)
-def task_test(self):
-    log('task_test...')
-    log('task_test...done')
+# See here for more crontab options:
+# http://docs.celeryproject.org/en/latest/userguide/periodic-tasks.html
 
-def task_test2():
-    log('task_test2...')
-    log('task_test2...done')
+@periodic_task(run_every=(crontab(minute='*'))) # Every minute
+def minute_updates():
+    log('TASK: minute_updates')
 
-@periodic_task(run_every=(crontab(hour="*", minute="*", day_of_week="*")))
-def scraper_example():
-    log('scraper_example...')
-    log('scraper_example...done')
+@periodic_task(run_every=(crontab(minute='*/15'))) # Every 15 minutes
+def quarter_hour_updates():
+    log('TASK: quarter_hour_updates')
+    task_periodic_refresh_all_follower_ids.delay()
+
+@periodic_task(run_every=(crontab(minute=0))) # Every hour
+def hourly_updates():
+    log('TASK: hourly_updates')
+
+@periodic_task(run_every=(crontab(minute=0, hour=0))) # Daily at midnight
+def daily_updates():
+    log('TASK: daily_updates')
+
+@periodic_task(run_every=(crontab(minute=0, hour=0, day_of_week='sunday')))
+def weekly_updates():
+    log('TASK: weekly_updates')
+
