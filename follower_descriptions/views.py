@@ -152,6 +152,51 @@ def CeleryStats(request):
 
     return render(request, 'follower_descriptions/stats.html', context)
 
+
+def user_detail(request, twitter_handle):
+
+    graduate = models.Graduate.objects.get(twitter_handle=twitter_handle)
+
+    if (request.method == 'POST'):
+        description = request.POST['description']
+
+        comment = models.Comment(user = request.user,
+                                 graduate = graduate,
+                                 description = description)
+        comment.save()
+
+
+    # See http://elasticsearch-dsl.readthedocs.org/en/latest/search_dsl.html
+    client = Elasticsearch('localhost')
+
+    # s = Search(using=client, index="my_index") \
+    #    .query("match", user_description=search_term)
+
+    s = Search(using=client, index="my_index") \
+        .query("multi_match", query=twitter_handle, fields=['screen_name'])
+
+    response = s.execute(ignore_cache=True)
+
+    # Resolve the uni handle to something more user-facing
+    followed_uni_handle = response[0].followed_uni_handle
+    university = models.University.objects.get(uni_handle=followed_uni_handle)
+
+    # Get comments
+    comment_list = []
+    comments = models.Comment.objects.filter(graduate = graduate)
+    for comment in comments:
+        comment_list.append(comment)
+
+
+    context = { 'screen_name': twitter_handle,
+                'detail': response[0],
+                'uni_name': university.name,
+                'comments': comment_list}
+    return render(request, 'follower_descriptions/user_detail.html', context)
+
+
+
+
 def test(request):
     tasks.log('Launching task_test...')
     tasks.task_test.delay()

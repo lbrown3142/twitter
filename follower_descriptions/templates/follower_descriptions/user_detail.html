@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>{{screen_name}}</h1>
+
+<h2>Following: {{ uni_name }} </h2>
+
+<h2>
+    Link:
+<a href="https://twitter.com/{{screen_name}}">twitter.com/{{screen_name}}</a>
+</h2>
+
+
+<form action='' method='post'>
+    {% csrf_token %}
+    <label>
+        Add Comment:
+    </label>
+    <input type='text' name="description" value=''/>
+    <input type="submit" value="Add"/>
+</form>
+
+
+<table class="table">
+    <thead>
+    <th>Date</th>
+    <th>By</th>
+    <th>Description</th>
+    </thead>
+{% for comment in comments %}
+    <tr>
+        <td>{{comment.date}}</td>
+        <td>{{comment.user.username}}</td>
+        <td>{{comment.description}}</td>
+    </tr>
+{% endfor %}
+</table>
+{% endblock %}

@@ -16,7 +16,7 @@
     <input class="btn btn-default" type="submit" name="previous" value="Previous page" {{previous_disabled}}/>
     <input class="btn btn-default" type="submit" name="next" value="Next page" {{next_disabled}}/>
     <label>Results {{cursor}}-{{cursor_end}} of {{count}} </label>
-
+¬¬
     <table class="table">
         <thead>
         <tr>
@@ -28,11 +28,11 @@
         <tbody>
         {% for result in followers %}
         <tr>
-            <td>{{ result.screen_name }}</td>
+            <td><a href="/search/user/{{ result.screen_name }}" >{{ result.screen_name }}</a></td>
             <!--<td><a href="{{result.url}}">{{result.url}}</a></td>-->
             <td><a href="https://twitter.com/{{result.screen_name}}">twitter.com/{{result.screen_name}}</a></td>
 
-            <td>{{ result.user_description}}</td>
+            <td>{{result.user_description}}</td>
         </tr>
         {% endfor %}
         </tbody>

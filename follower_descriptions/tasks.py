@@ -115,6 +115,7 @@ def task_get_followers_data(self, id_list, uni_handle):
                 graduate.name = data['name']
                 graduate.description = data['description']
                 graduate.last_refresh = timezone.now()
+                graduate.twitter_handle = data['screen_name']
                 graduate.save() # Need to save before adding relationship
                 graduate.following.add(university)
                 graduate.save()
