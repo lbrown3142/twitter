@@ -1,0 +1,32 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>
+    Developer: Lewis Brown <br><br>
+
+    Email: Lewis.Brown@Capgemini.com
+ 	</h2>
+<br>
+
+
+   <form action='' method='post'>
+    {% csrf_token %}
+    <label>
+        Raise Issue:
+    </label>
+    <input type='text' name="description" value=''/>
+    <input type="submit" value="Add"/>
+    </form>
+
+    {% if success == True %}
+
+    <div>
+        Thanks for your feedback!
+    </div>
+
+    {% endif %}
+{% endblock %}
+
+

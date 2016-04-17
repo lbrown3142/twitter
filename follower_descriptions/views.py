@@ -209,3 +209,18 @@ def about(request):
 
 
     return render(request, 'follower_descriptions/about.html', {})
+
+def contact(request):
+     context = {}
+
+     if (request.method == 'POST'):
+        description = request.POST['description']
+
+        feedback = models.Feedback(user = request.user,
+                                 description = description)
+        feedback.save()
+        context = {'success': True}
+
+
+
+     return render(request, 'follower_descriptions/contact.html', context)
