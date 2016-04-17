@@ -19,6 +19,7 @@ from django.contrib import admin
 from django.contrib.auth.views import login
 from django.conf.urls import url, include
 from django.views.generic import RedirectView
+from follower_descriptions import views
 
 urlpatterns = [
     url(r'^$', RedirectView.as_view(url='search/'), ),
@@ -26,4 +27,5 @@ urlpatterns = [
     url(r'^search/', include('follower_descriptions.urls', namespace = 'follower_descriptions')),
     url(r'^login$', django.contrib.auth.views.login, name='login'),
     url(r'^logout$', django.contrib.auth.views.logout, {'next_page': 'login'}, name='logout'),
+    url(r'^about$', views.about)
 ]

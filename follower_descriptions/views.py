@@ -204,3 +204,8 @@ def test(request):
     context = {'test_count':''}
 
     return render(request, 'follower_descriptions/tests.html', context)
+
+def about(request):
+
+
+    return render(request, 'follower_descriptions/about.html', {})
