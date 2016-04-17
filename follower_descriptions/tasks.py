@@ -11,6 +11,7 @@ from django.utils import timezone
 import random
 import urllib.request
 import pprint
+import datetime
 from . import follower_descriptions_search
 from twitter import settings
 
@@ -32,6 +33,8 @@ twitter_data = 0;
 kibana_uploads = 0;
 
 def log(message):
+    message = datetime.datetime.utcnow().isoformat() + " " + message
+
     print(message)
     try:
         if settings.CAPGEMINI_LOG == True:
