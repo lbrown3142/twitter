@@ -30,9 +30,18 @@ class Comment(models.Model):
     description = models.CharField(max_length=4096, default='')
     date = models.DateTimeField(blank=True, null=True)
 
-def __str__(self):
-        return self.name
+    def __str__(self):
+        return self.description
 
+class Feedback(models.Model):
+    id = models.AutoField(primary_key=True)
+    date = models.DateTimeField(blank=True, null=True)
+    user = models.ForeignKey(User)
+    description = models.CharField(max_length=4096, default='')
+
+
+    def __str__(self):
+        return self.description
 
 
 

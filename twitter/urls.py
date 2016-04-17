@@ -27,5 +27,7 @@ urlpatterns = [
     url(r'^search/', include('follower_descriptions.urls', namespace = 'follower_descriptions')),
     url(r'^login$', django.contrib.auth.views.login, name='login'),
     url(r'^logout$', django.contrib.auth.views.logout, {'next_page': 'login'}, name='logout'),
-    url(r'^about$', views.about)
+    url(r'^about$', views.about),
+    url(r'^contact$', views.contact)
+
 ]
