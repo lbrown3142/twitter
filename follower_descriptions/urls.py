@@ -11,6 +11,5 @@ urlpatterns = [
     url(r'^user\/(.+)$', follower_descriptions.views.user_detail),
 
     url(r'^stats$', follower_descriptions.views.CeleryStats),
-    url(r'^test$', follower_descriptions.views.test),
 
 ]

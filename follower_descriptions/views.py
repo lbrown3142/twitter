@@ -1,9 +1,12 @@
+import urllib
+
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.db.models import Count
 
+from twitter.settings import AWS
 from . import follower_descriptions_search, tasks
 import twitter
 import celery
@@ -171,7 +174,7 @@ def user_detail(request, twitter_handle):
 
 
     # See http://elasticsearch-dsl.readthedocs.org/en/latest/search_dsl.html
-    client = Elasticsearch('localhost')
+    client = Elasticsearch(AWS)
 
     # s = Search(using=client, index="my_index") \
     #    .query("match", user_description=search_term)
@@ -198,19 +201,49 @@ def user_detail(request, twitter_handle):
                 'comments': comment_list}
     return render(request, 'follower_descriptions/user_detail.html', context)
 
-
-
-
-def test(request):
-    tasks.log('Launching task_test...')
-    tasks.task_test.delay()
-    tasks.log('Launching task_test...done')
-    context = {'test_count':''}
-
-    return render(request, 'follower_descriptions/tests.html', context)
-
 def settings(request):
-    return render(request, 'follower_descriptions/settings.html', {})
+    context = {}
+    if (request.method == 'POST'):
+        clear = request.POST['clear']
+        if clear == 'clear':
+
+            # Purge all celery tasks (not sure if we need all 3 calls)
+            number_discarded1 = celery.task.control.discard_all()
+            number_discarded2 = celery.current_app.control.purge()
+            number_discarded3 = twitter.celery_app.control.purge()
+
+            # The scheduled queue doesn't get purged by discard_all/purge.
+            # It seems we have to revoke the tasks explicitly. Even then, they
+            # still remain in the queue, but are ignored when they are eventually
+            # scheduled to run.
+            scheduled_queues = []
+            scheduled = celery.task.control.inspect().scheduled()
+            if scheduled:
+                for queue in scheduled:
+                    scheduled_queues += scheduled[queue]
+
+            for task in scheduled_queues:
+                id = task['request']['id']
+                celery.task.control.revoke(id)
+
+
+            # Purge ElasticSearch
+            req = urllib.request.Request(url='http://' + AWS + ':9200/_all', method='DELETE')
+            with urllib.request.urlopen(req) as f:
+                pass
+
+            # Purge the local database
+            models.University.objects.all().delete()
+            models.Graduate.objects.all().delete()
+            models.Comment.objects.all().delete()
+            models.TaskStats.objects.all().delete()
+
+            # We don't delete users (otherwise we would delete admin users)
+            # We don't delete feedback
+
+            context['database_cleared'] = True
+
+    return render(request, 'follower_descriptions/settings.html', context)
 
 
 def about(request):

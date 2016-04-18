@@ -5,6 +5,21 @@
 
 <h1>Settings</h1>
 
+<form action='' method='post'>
+    {% csrf_token %}
+    <label>
+        Clear database
+    </label>
+    <!-- hidden field so we know which submit button was clicked -->
+    <input type='text' name="clear" value="clear" hidden/>
+    <input type="submit" value="Clear" onclick="return confirm('Are you sure you want to delete the database?')"/>
+    </form>
+
+    {% if database_cleared %}
+        <script>alert('Database cleared')</script>
+    {% endif %}
+
+
 {% endblock %}
 
 

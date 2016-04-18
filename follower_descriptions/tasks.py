@@ -5,6 +5,7 @@ from celery.schedules import crontab
 from celery.task import periodic_task
 
 from twitter import celery_app as app
+from twitter.settings import AWS
 from . import models
 from django.utils import timezone
 import random
@@ -13,19 +14,6 @@ import pprint
 import datetime
 from . import follower_descriptions_search
 from twitter import settings
-
-'''
-from celery.task.control import inspect
-
-# Inspect all nodes.
->>> i = inspect()
-
->>> i.scheduled()
-or:
->>> i.active()
-'''
-
-aws = "localhost"
 
 twitter_ids = 0;
 twitter_data = 0;
@@ -42,15 +30,19 @@ def log(message):
     except Exception as e:
         pass
 
+@app.task(bind=True)
+def task_test(self):
+    update_task_stats('task_test')
+    self.retry(countdown=int(60))
 
 @app.task(bind=True)
 def task_periodic_refresh_all_follower_ids(self):
+    update_task_stats('task_periodic_refresh_all_follower_ids')
+
     # Check all universities for new followers
     universities = models.University.objects.all()
     for uni in universities:
         task_get_follower_ids.delay(uni.uni_handle)
-
-    update_task_stats('task_periodic_refresh_all_follower_ids')
 
 @app.task(bind=True)
 def task_get_follower_ids(self, uni_handle, cursor=-1):
@@ -164,7 +156,7 @@ def task_upload_to_kibana(self, data):
             payload += '"url":"' + str(data['url']) + '", "user_description":"' + description + '",'
             payload += '"followed_uni_handle":"' + data['followed_uni_handle'] + '"}\n'
 
-            req = urllib.request.Request(url='http://' + aws + ':9200/my_index/twitter/_bulk',
+            req = urllib.request.Request(url='http://' + AWS + ':9200/my_index/twitter/_bulk',
                                          data=payload.encode('utf-8'),
                                          method='PUT')
 
@@ -207,10 +199,8 @@ def hourly_updates():
 def daily_updates():
     log('TASK: daily_updates')
 
-
     # Refresh university followers
     task_periodic_refresh_all_follower_ids.delay()
-
 
 
 @periodic_task(run_every=(crontab(minute=0, hour=0, day_of_week='sunday')))

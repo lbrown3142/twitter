@@ -33,6 +33,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+AWS = "localhost"
 
 # Application definition
 
