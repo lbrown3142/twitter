@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 import sys
 from datetime import datetime, timedelta
-
 from celery.schedules import crontab
 from celery.task import periodic_task
 
@@ -51,10 +50,13 @@ def task_periodic_refresh_all_follower_ids(self):
     for uni in universities:
         task_get_follower_ids.delay(uni.uni_handle)
 
+    update_task_stats('task_periodic_refresh_all_follower_ids')
 
 @app.task(bind=True)
 def task_get_follower_ids(self, uni_handle, cursor=-1):
     log('task_get_follower_ids ' + uni_handle + "...")
+    update_task_stats('task_get_follower_ids')
+
     try:
         try:
             university = models.University.objects.get(uni_handle=uni_handle)
@@ -103,6 +105,8 @@ def task_get_follower_ids(self, uni_handle, cursor=-1):
 
 @app.task(bind=True)
 def task_get_followers_data(self, id_list, uni_handle):
+    update_task_stats('task_get_followers_data')
+
     try:
         university = models.University.objects.get(uni_handle=uni_handle)
 
@@ -141,7 +145,7 @@ def task_get_followers_data(self, id_list, uni_handle):
 
 @app.task(bind=True)
 def task_upload_to_kibana(self, data):
-
+    update_task_stats('task_upload_to_kibana')
     retry = 2
     while retry > 0:
 
@@ -203,11 +207,22 @@ def hourly_updates():
 def daily_updates():
     log('TASK: daily_updates')
 
+
     # Refresh university followers
     task_periodic_refresh_all_follower_ids.delay()
+
 
 
 @periodic_task(run_every=(crontab(minute=0, hour=0, day_of_week='sunday')))
 def weekly_updates():
     log('TASK: weekly_updates')
 
+def update_task_stats(task_name):
+    try:
+        task = models.TaskStats.objects.get(task_name=task_name)
+    except models.TaskStats.DoesNotExist:
+        task = models.TaskStats(task_name=task_name)
+
+    task.count = task.count + 1
+    task.last_run = timezone.now()
+    task.save()

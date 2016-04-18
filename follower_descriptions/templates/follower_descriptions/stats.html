@@ -2,7 +2,27 @@
 
 {% block content %}
 
-<h1>Tasks</h1>
+<h1>Task History</h1>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Task Name:</th>
+        <th>Count:</th>
+        <th>Last Run:</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for task in task_stats %}
+        <tr>
+            <td>{{ task.task_name }}</td>
+            <td>{{ task.count }}</td>
+            <td>{{ task.last_run }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<h1>Current Task Queue</h1>
 <h2>Summary</h2>
 
 <table class="table">

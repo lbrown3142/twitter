@@ -39,17 +39,13 @@ class Feedback(models.Model):
     user = models.ForeignKey(User)
     description = models.CharField(max_length=4096, default='')
 
-
     def __str__(self):
         return self.description
 
-
-
-
-# Defunct - remove at some point
-class UniFollowers(models.Model):
-    university = models.ForeignKey(University)
-    graduate = models.ForeignKey(Graduate)
+class TaskStats(models.Model):
+    task_name = models.CharField(primary_key=True, max_length=64)
+    last_run = models.DateTimeField(blank=True, null=True)
+    count = models.BigIntegerField(default = 0)
 
     def __str__(self):
-        return self.university.uni_handle
+        return self.task_name

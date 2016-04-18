@@ -120,6 +120,9 @@ def search_followers(request):
 
 def CeleryStats(request):
 
+    # Get TaskStats
+    task_stats = models.TaskStats.objects.all()
+
     i = inspect()
     active = i.active()
     scheduled = i.scheduled()
@@ -143,7 +146,8 @@ def CeleryStats(request):
         for queue in reserved:
             reserved_queues += reserved[queue]
 
-    context = { 'active_count':len(active_queues),
+    context = { 'task_stats': task_stats,
+                'active_count':len(active_queues),
                 'scheduled_count':len(scheduled_queues),
                 'reserved_count':len(reserved_queues),
                 'active':active_queues,
@@ -205,9 +209,11 @@ def test(request):
 
     return render(request, 'follower_descriptions/tests.html', context)
 
+def settings(request):
+    return render(request, 'follower_descriptions/settings.html', {})
+
+
 def about(request):
-
-
     return render(request, 'follower_descriptions/about.html', {})
 
 def contact(request):

@@ -51,14 +51,15 @@
             <li class="active"><a href="/about">About</a></li>
             <li class="active"><a href="/contact">Contact</a></li>
 
-
-            <li><a href="#contact">Contact</a></li>
+            {% if user.is_superuser %}
+               <li class="active"><a href="/settings">Settings</a></li>
+            {% endif %}
 
             {% if user.is_authenticated %}
               <li class="navbar-text">{{ user }}</li>
-              <li><a href="{% url 'logout' %}" >Logout</a></li>
+              <li class="active"><a href="{% url 'logout' %}" >Logout</a></li>
             {% else %}
-              <li><a href="{% url 'login' %}" >Login</a></li>
+              <li class="active"><a href="{% url 'login' %}" >Login</a></li>
             {% endif %}
 
 
