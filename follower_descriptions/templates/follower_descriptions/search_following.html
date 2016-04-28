@@ -1,14 +1,19 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form action='' method='post'>
-    {% csrf_token %}
-    <label>
-        Add Twitter Handle:
-    </label>
-    <input type='text' name="twitter_handle" value=''/>
-    <input type="submit" value="Add"/>
-</form>
+<div>
+    <form action='' method='post'>
+        {% csrf_token %}
+
+        <div class="input-prepend">
+            <span class="add-on">@</span>
+            <input type='text' name="twitter_handle" value='' placeholder="Twitter Handle"/>
+             <input type="submit" value="Add"/>
+
+        </div>
+       
+    </form>
+</div>
 <p/>
 <table class="table">
     <thead>

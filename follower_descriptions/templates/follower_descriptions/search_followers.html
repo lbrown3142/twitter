@@ -3,12 +3,18 @@
 {% block content %}
 <form action='' method='post'>
     {% csrf_token %}
+
+
+    <div >
     <label>
         Search Followers:
     </label>
-    <input type='text' name="search_term" value='{{search_term}}'/>
+
+
+    <input type='text' class="search-form" name="search_term" value='{{search_term}}'/>
     <input type='hidden' name="cursor" value='{{cursor}}'/>
     <input class="btn btn-default" type="submit" name="search" value="Search"/>
+    </div>
 
     <p/>
     <p/>
