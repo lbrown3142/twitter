@@ -147,3 +147,32 @@ def search_distribute(json_list, uni_handle, query):
     return results
 
 
+# Get profile info - not currently working
+def get_profile_banner_info(screen_name, user_id):
+    # e.g.
+    # https://api.twitter.com/1.1/users/profile_banner.json?screen_name=rjsinha
+
+    url1 = "https://api.twitter.com/1.1/users/profile_banner.json"
+    params = {
+        "oauth_version": "1.0",
+        "oauth_nonce": oauth2.generate_nonce(),
+        "oauth_timestamp": int(time.time())
+    }
+
+    params["oauth_consumer_key"] = consumer.key
+    params["oauth_token"] = token.key
+    #params["screen_name"] = screen_name
+    params["user_id"] = user_id
+
+    req = oauth2.Request(method="GET", url=url1,
+                         parameters=params)
+    signature_method = oauth2.SignatureMethod_HMAC_SHA1()
+    req.sign_request(signature_method, consumer, token)
+    url = req.to_url()
+
+    response = urllib.request.urlopen(url)
+    data = response.read().decode('utf-8')
+    data = json.loads(data)
+
+    return data
+

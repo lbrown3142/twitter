@@ -194,8 +194,12 @@ def user_detail(request, twitter_handle):
     for comment in comments:
         comment_list.append(comment)
 
+    # Get profile banner info
+    #profile_banner_info = follower_descriptions_search.get_profile_banner_info(twitter_handle, graduate.id)
+
 
     context = { 'screen_name': twitter_handle,
+                'name': graduate.name,
                 'detail': response[0],
                 'uni_name': university.name,
                 'comments': comment_list}
