@@ -30,7 +30,8 @@
 </head>
 
 <body>
-
+    <nav class="navbar navbar-fixed-top">
+        <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapse" data-toggle="collapse" data-target="#navbar"
                         aria-expanded="false" aria-controls="navbar">
@@ -72,7 +73,7 @@
 
                     {% if user.is_authenticated %}
                     
-                        <li class="navbar-text">{{ user }}</li>
+                        <!--<li class="navbar-text">{{ user }}</li> -->
                         <li><a class="active" href="{% url 'logout' %}">Logout</a></li>
 
                     {% else %}
