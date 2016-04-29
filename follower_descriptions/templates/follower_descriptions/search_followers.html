@@ -4,111 +4,46 @@
 <form action='' method='post'>
     {% csrf_token %}
 
+    <div class="search-body">
 
-    <div>
-        <label>
-            Search Followers:
-        </label>
-
-
-        <input type='text' class="search-form" name="search_term" value='{{search_term}}'/>
-        <input type='hidden' name="cursor" value='{{cursor}}'/>
-        <input class="btn btn-default" type="submit" name="search" value="Search"/>
-    </div>
-
-    <p/>
-    <p/>
-
-    <input class="btn btn-default" type="submit" name="previous" value="Previous page" {{previous_disabled}}/>
-    <input class="btn btn-default" type="submit" name="next" value="Next page" {{next_disabled}}/>
-    <label>Results {{cursor}}-{{cursor_end}} of {{count}} </label>
-
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Name:</th>
-            <th>Description:</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for result in followers %}
-        <tr>
-            <!--<td><a href="/search/user/{{ result.screen_name }}" >{{ result.screen_name }}</a></td>-->
-            <td>
-
-                <div class="container">
-                    <div >
-                        <!-- code start -->
-                        <div class="twPc-div">
-                            <a class="twPc-bg twPc-block"></a>
-
-                            <div>
-                                <div class="twPc-button">
-                                    <!-- Twitter Button | you can get from: https://about.twitter.com/tr/resources/buttons#follow -->
-                                    <a href="https://twitter.com/share" class="twitter-share-button"
-                                       data-show-count="false" data-size="large" data-show-screen-name="false"
-                                       data-dnt="true">Tweet</a>
-                                    <script>
-                                        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-                                    </script>
-                                    <!-- Twitter Button -->
-
-                                </div>
-
-                                <a title="{{ name }}" href="https://twitter.com/{{result.screen_name}}"
-                                   class="twPc-avatarLink">
-                                    <!--<img alt="{{name}}" src="https://pbs.twimg.com/profile_images/378800000352678934/34f9e192635975bf42e534434e2b6273_bigger.jpeg" class="twPc-avatarImg">-->
-                                    <img alt="{{name}}" src="https://avatars.io/twitter/{{result.screen_name}}"
-                                         class="twPc-avatarImg">
-                                </a>
+        <div class="search-followers">
+            <label>
+                Search Candidates:
+            </label>
 
 
-                                <div class="twPc-divUser">
-                                    <div class="twPc-divName">
-                                        <a href="https://twitter.com/{{result.screen_name}}">{{ name }}</a>
-                                    </div>
-			<span>
-				<a href="https://twitter.com/{{result.screen_name}}">@<span>{{result.screen_name}}</span></a>
-			</span>
-                                </div>
+            <input type='text' class="search-form" name="search_term" value='{{search_term}}'
+                   placeholder=" e.g. Data Science "/>
+            <input type='hidden' name="cursor" value='{{cursor}}'/>
+            <input class="btn btn-default" type="submit" name="search" value="Search"/>
+        </div>
 
-                                <div class="twPc-divStats">
-                                    <ul class="twPc-Arrange">
-                                        <li class="twPc-ArrangeSizeFit">
-                                            <a href="https://twitter.com/{{result.screen_name}}" title="9.840 Tweet">
-                                                <span class="twPc-StatLabel twPc-block">Tweets</span>
-                                                <span class="twPc-StatValue">9.840</span>
-                                            </a>
-                                        </li>
-                                        <li class="twPc-ArrangeSizeFit">
-                                            <a href="https://twitter.com/{{result.screen_name}}/following"
-                                               title="885 Following">
-                                                <span class="twPc-StatLabel twPc-block">Following</span>
-                                                <span class="twPc-StatValue">885</span>
-                                            </a>
-                                        </li>
-                                        <li class="twPc-ArrangeSizeFit">
-                                            <a href="https://twitter.com/{{result.screen_name}}/followers"
-                                               title="1.810 Followers">
-                                                <span class="twPc-StatLabel twPc-block">Followers</span>
-                                                <span class="twPc-StatValue">1.810</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- code end -->
-                    </div>
-                </div>
 
-            </td>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Name:</th>
+                <th>Description:</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for result in followers %}
+            <tr>
+                <td><a href="/search/user/{{ result.screen_name }}">{{ result.screen_name }}</a></td>
+                <td>{{result.user_description}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
 
-            <td>{{result.user_description}}</td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <div class="curser-buttons">
+            <input class="btn btn-default" type="submit" name="previous" value="Previous page" {{previous_disabled}}/>
+            <input class="btn btn-default" type="submit" name="next" value="Next page" {{next_disabled}}/>
+            <label>Results {{cursor}}-{{cursor_end}} of {{count}} </label>
+
+        </div>
+
+
 </form>
 
 {% endblock %}
