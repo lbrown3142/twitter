@@ -1,5 +1,5 @@
 body {
-  padding-top: 60px;
+  padding-top: 20px;
 }
 
 .starter-template {
@@ -7,46 +7,52 @@ body {
   text-align: center;
 }
 
-.navbar-color {
-
+.navbar-fixed-top {
+    min-height: 80px;
 }
 
-@media screen and (min-width: 768px) and (max-width: 990px){
-    .medium {
-        margin-top: 50px;
-    }
+.navbar-nav > li > a {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    line-height: 80px;
 }
+
+.navbar-header {
+    margin-right: 20px !important;
+}
+
+@media (max-width: 767px) {
+    .navbar-nav > li > a {
+    line-height: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;}
+
+   .logo-size {
+       max-width: 250px;
+   }
+}
+
+@media (min-width: 768px) {
+   .navbar-header {
+       max-width: 250px;
+   }
+}
+
 
 .cap-image{
-
     padding-top: 15px;
 }
 
-.home-title{
-    padding-top: 9px;
-    padding-left: 28px;
-
-    padding-right: 5px;
-
-    margin-top: 0px;
-    margin-left: 0px;
-    font-size: 20px;
-    color: rgb(0,72,141);
+.icon-bar {
+    background-color: #337ab7  !important;
 }
 
-.navbar-font{
-    font-size: 20px;
-    color: #000000;
-}
-
-.navbar-pos{
-    margin-left: 20px;
-    margin-top: 18px;
-}
 
 .extended-content{
-     margin-top: 60px;
-
+     margin-top: 20px;
+     margin-left: 20px;
+     padding-top: 0px;
+     padding-left: 0px;
 }
 
 img {
@@ -62,57 +68,8 @@ img {
 
 }
 
-@media (max-width: 991px) {
-    .navbar-header {
-        float: none;
-    }
-    .navbar-toggle {
-        display: block;
-    }
-    .navbar-collapse {
-        border-top: 1px solid transparent;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
-    }
-    .navbar-collapse.collapse {
-        display: none!important;
-    }
-    .navbar-nav {
-        float: none!important;
-        margin: 7.5px -15px;
-    }
-    .navbar-nav>li {
-        float: none;
-    }
-    .navbar-nav>li>a {
-        padding-top: 10px;
-        padding-bottom: 10px;
-    }
-    .navbar-text {
-        float: none;
-        margin: 15px 0;
-    }
-    /* since 3.1.0 */
-    .navbar-collapse.collapse.in {
-        display: block!important;
-    }
-    .collapsing {
-        overflow: hidden!important;
-    }
-
-
-
-
-}
-.search-followers {
-    margin-left: 7px;
-}
 
 .curser-buttons {
     margin-left: 2px;
 }
 
-.search-body {
-    margin-top: 12px;
-    margin-left: -8px;
-
-}
