@@ -4,45 +4,52 @@
 <form action='' method='post'>
     {% csrf_token %}
 
+    <div class="search-body">
 
-    <div >
-    <label>
-        Search Followers:
-    </label>
+        <div class="search-followers">
+            <label>
+                Search Candidates:
+            </label>
 
 
-    <input type='text' class="search-form" name="search_term" value='{{search_term}}'/>
-    <input type='hidden' name="cursor" value='{{cursor}}'/>
-    <input class="btn btn-default" type="submit" name="search" value="Search"/>
+            <input type='text' class="search-form" name="search_term" value='{{search_term}}'
+                   placeholder=" e.g. Data Science "/>
+            <input type='hidden' name="cursor" value='{{cursor}}'/>
+            <input class="btn btn-default" type="submit" name="search" value="Search"/>
+        </div>
+
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Name:</th>
+                <th>Url:</th>
+                <th>Description:</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for result in followers %}
+            <tr>
+                <td><a href="/search/user/{{ result.screen_name }}">{{ result.screen_name }}</a></td>
+                <!--<td><a href="{{result.url}}">{{result.url}}</a></td>-->
+                <td><a href="https://twitter.com/{{result.screen_name}}">twitter.com/{{result.screen_name}}</a></td>
+
+                <td>{{result.user_description}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="curser-buttons">
+            <input class="btn btn-default" type="submit" name="previous" value="Previous page" {{previous_disabled}}/>
+            <input class="btn btn-default" type="submit" name="next" value="Next page" {{next_disabled}}/>
+            <label>Results {{cursor}}-{{cursor_end}} of {{count}} </label>
+
+        </div>
+
     </div>
 
-    <p/>
-    <p/>
 
-    <input class="btn btn-default" type="submit" name="previous" value="Previous page" {{previous_disabled}}/>
-    <input class="btn btn-default" type="submit" name="next" value="Next page" {{next_disabled}}/>
-    <label>Results {{cursor}}-{{cursor_end}} of {{count}} </label>
-
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Name:</th>
-            <th>Url:</th>
-            <th>Description:</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for result in followers %}
-        <tr>
-            <td><a href="/search/user/{{ result.screen_name }}" >{{ result.screen_name }}</a></td>
-            <!--<td><a href="{{result.url}}">{{result.url}}</a></td>-->
-            <td><a href="https://twitter.com/{{result.screen_name}}">twitter.com/{{result.screen_name}}</a></td>
-
-            <td>{{result.user_description}}</td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
 </form>
 
 {% endblock %}
