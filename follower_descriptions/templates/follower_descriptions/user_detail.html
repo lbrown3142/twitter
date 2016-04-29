@@ -3,72 +3,132 @@
 {% block content %}
 
 <div class="container">
-<div class="row">
-<!-- code start -->
-<div class="twPc-div">
-    <a class="twPc-bg twPc-block"></a>
+    <div class="row">
+        <!-- code start -->
+        <div class="twPc-div">
+            <a class="twPc-bg twPc-block"></a>
 
-	<div>
-		<div class="twPc-button">
-            <!-- Twitter Button | you can get from: https://about.twitter.com/tr/resources/buttons#follow -->
-            <a href="https://twitter.com/share" class="twitter-share-button" data-show-count="false" data-size="large" data-show-screen-name="false" data-dnt="true">Tweet</a>
-            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-            <!-- Twitter Button -->
+            <div>
+                <div class="twPc-button">
+                    <!-- Twitter Button | you can get from: https://about.twitter.com/tr/resources/buttons#follow -->
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-show-count="false"
+                       data-size="large" data-show-screen-name="false" data-dnt="true">Tweet</a>
+                    <script>
+                        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
 
-		</div>
+                    </script>
+                    <!-- Twitter Button -->
 
-		<a title="{{ name }}" href="https://twitter.com/{{screen_name}}" class="twPc-avatarLink">
-			<!--<img alt="{{name}}" src="https://pbs.twimg.com/profile_images/378800000352678934/34f9e192635975bf42e534434e2b6273_bigger.jpeg" class="twPc-avatarImg">-->
-			<img alt="{{name}}" src="https://avatars.io/twitter/{{screen_name}}" class="twPc-avatarImg">
-		</a>
+                </div>
+
+                <a title="{{ name }}" href="https://twitter.com/{{screen_name}}" class="twPc-avatarLink">
+                    <!--<img alt="{{name}}" src="https://pbs.twimg.com/profile_images/378800000352678934/34f9e192635975bf42e534434e2b6273_bigger.jpeg" class="twPc-avatarImg">-->
+                    <img alt="{{name}}" src="https://avatars.io/twitter/{{screen_name}}" class="twPc-avatarImg">
+                </a>
 
 
-
-		<div class="twPc-divUser">
-			<div class="twPc-divName">
-				<a href="https://twitter.com/{{screen_name}}">{{ name }}</a>
-			</div>
+                <div class="twPc-divUser">
+                    <div class="twPc-divName">
+                        <a href="https://twitter.com/{{screen_name}}">{{ name }}</a>
+                    </div>
 			<span>
 				<a href="https://twitter.com/{{screen_name}}">@<span>{{screen_name}}</span></a>
 			</span>
-		</div>
+                </div>
 
-		<div class="twPc-divStats">
-			<ul class="twPc-Arrange">
-				<li class="twPc-ArrangeSizeFit">
-					<a href="https://twitter.com/{{screen_name}}" title="9.840 Tweet">
-						<span class="twPc-StatLabel twPc-block">Tweets</span>
-						<span class="twPc-StatValue">9.840</span>
-					</a>
-				</li>
-				<li class="twPc-ArrangeSizeFit">
-					<a href="https://twitter.com/{{screen_name}}/following" title="885 Following">
-						<span class="twPc-StatLabel twPc-block">Following</span>
-						<span class="twPc-StatValue">885</span>
-					</a>
-				</li>
-				<li class="twPc-ArrangeSizeFit">
-					<a href="https://twitter.com/{{screen_name}}/followers" title="1.810 Followers">
-						<span class="twPc-StatLabel twPc-block">Followers</span>
-						<span class="twPc-StatValue">1.810</span>
-					</a>
-				</li>
-			</ul>
-		</div>
-	</div>
-</div>
-<!-- code end -->
-</div>
+                <div class="twPc-divStats">
+                    <ul class="twPc-Arrange">
+                        <li class="twPc-ArrangeSizeFit">
+                            <a href="https://twitter.com/{{screen_name}}" title="9.840 Tweet">
+                                <span class="twPc-StatLabel twPc-block">Tweets</span>
+                                <span class="twPc-StatValue">9.840</span>
+                            </a>
+                        </li>
+                        <li class="twPc-ArrangeSizeFit">
+                            <a href="https://twitter.com/{{screen_name}}/following" title="885 Following">
+                                <span class="twPc-StatLabel twPc-block">Following</span>
+                                <span class="twPc-StatValue">885</span>
+                            </a>
+                        </li>
+                        <li class="twPc-ArrangeSizeFit">
+                            <a href="https://twitter.com/{{screen_name}}/followers" title="1.810 Followers">
+                                <span class="twPc-StatLabel twPc-block">Followers</span>
+                                <span class="twPc-StatValue">1.810</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- code end -->
+    </div>
 </div>
 
 
 <h3>Following: {{ uni_name }} </h3>
 
+<!--
 <h3>
     Link:
 <a href="https://twitter.com/{{screen_name}}">twitter.com/{{screen_name}}</a>
 </h3>
+-->
 
+<div class="row">
+    <div class="col-sm-12">
+        <h3>Comments</h3>
+    </div><!-- /col-sm-12 -->
+</div><!-- /row -->
+
+
+<table class="table">
+    <thead>
+    <!--
+    <th>Date</th>
+    <th>By</th>
+    <th>Description</th>
+    -->
+    <th></th>
+    </thead>
+    {% for comment in comments %}
+    <tr>
+        <!--
+        <td>{{comment.date}}</td>
+        <td>{{comment.user.username}}</td>
+        <td>{{comment.description}}</td>
+        -->
+
+        <td>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-1">
+                        <div class="thumbnail">
+                            <img class="img-responsive user-photo"
+                                 src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png">
+                        </div><!-- /thumbnail -->
+                    </div><!-- /col-sm-1 -->
+
+                    <div class="col-sm-5">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <strong>{{comment.user.username}}</strong> <span
+                                    class="text-muted">commented 5 days ago</span>
+                            </div>
+                            <div class="panel-body">
+                                {{comment.description}}
+                            </div><!-- /panel-body -->
+                        </div><!-- /panel panel-default -->
+                    </div><!-- /col-sm-5 -->
+
+                </div><!-- /row -->
+
+            </div><!-- /container -->
+
+        </td>
+    </tr>
+    {% endfor %}
+</table>
 
 <form action='' method='post'>
     {% csrf_token %}
@@ -79,19 +139,4 @@
     <input type="submit" value="Add"/>
 </form>
 
-
-<table class="table">
-    <thead>
-    <th>Date</th>
-    <th>By</th>
-    <th>Description</th>
-    </thead>
-{% for comment in comments %}
-    <tr>
-        <td>{{comment.date}}</td>
-        <td>{{comment.user.username}}</td>
-        <td>{{comment.description}}</td>
-    </tr>
-{% endfor %}
-</table>
 {% endblock %}
