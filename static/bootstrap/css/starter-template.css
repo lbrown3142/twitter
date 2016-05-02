@@ -28,13 +28,13 @@ body {
     padding-bottom: 10px;}
 
    .logo-size {
-       max-width: 250px;
+       max-width: 210px;
    }
 }
 
 @media (min-width: 768px) {
    .navbar-header {
-       max-width: 250px;
+       max-width: 210px;
    }
 }
 
