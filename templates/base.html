@@ -41,7 +41,7 @@
 
 <nav class="navbar ">
     <div class="container-fluid">
-        <div class="navbar-header">
+        <div class="navbar-header navbar-margin" >
 
             <a href="#" class="pull-left"><img src="{% static 'images/logo.png' %}" class="logo-size"></a>
 
@@ -53,18 +53,22 @@
 
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
-            <ul class="nav navbar-nav">
+            <ul class="nav navbar-nav " style="margin-left: 12px;">
 
             <!--  do this if we want floating right items, but we then have a line break issue
             </ul>
             <ul class="nav navbar-nav navbar-right"> -->
 
-                <li class="navbar-tabs "><a href="/">Home</a></li>
+                <li class="navbar-tabs  "><a href="/">Home</a></li>
                 <li ><a href="/search/users">Search</a></li>
                 <li ><a href="/search/organisations">Organisations</a></li>
                 <li ><a href="/search/stats">Stats</a></li>
                 <li ><a href="/about">About</a></li>
                 <li ><a href="/contact">Contact</a></li>
+
+                {% if user.is_superuser %}
+                <li ><a href="/settings">Settings</a></li>
+                {% endif %}
 
                 {% if user.is_authenticated %}
 
@@ -77,9 +81,7 @@
                 {% endif %}
 
 
-                {% if user.is_superuser %}
-                <li ><a href="/settings">Settings</a></li>
-                {% endif %}
+
 
             </ul>
         </div>
