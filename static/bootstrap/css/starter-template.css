@@ -28,13 +28,13 @@ body {
     padding-bottom: 10px;}
 
    .logo-size {
-       max-width: 210px;
+       max-width: 205px;
    }
 }
 
 @media (min-width: 768px) {
    .navbar-header {
-       max-width: 210px;
+       max-width: 205px;
    }
 }
 
@@ -73,3 +73,14 @@ img {
     margin-left: 2px;
 }
 
+.search-candidates{
+
+    margin-bottom: 25px;
+    margin-left: 7px;
+
+}
+
+.collapse-button{
+
+    margin: 0 !important;
+}
