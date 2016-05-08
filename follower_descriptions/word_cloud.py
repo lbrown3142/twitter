@@ -7,32 +7,31 @@ Generating a square wordcloud from the US constitution using default arguments.
 
 from os import path
 from wordcloud import WordCloud
-
-d = path.dirname(__file__)
-
-# Read the whole text.
-text = open(path.join(d, 'word_test.txt')).read()
-
-# Generate a word cloud image
-wordcloud = WordCloud().generate(text)
-
-# Display the generated image:
-# the matplotlib way:
 import matplotlib.pyplot as plt
-#plt.imshow(wordcloud)
-#plt.axis("off")
+import twitter.settings
 
-# take relative word frequencies into account, lower max_font_size
-wordcloud = WordCloud(max_font_size=40, relative_scaling=.5).generate(text)
-plt.figure()
-plt.imshow(wordcloud)
-plt.axis("off")
+def GenerateWordCloud():
+    d = path.dirname(__file__)
 
-plt.savefig('/home/lewis/fig.png')
-plt.show()
+    # Read the whole text.
+    text = open(path.join(d, 'word_test.txt')).read()
 
-x = 1
+    # Generate a word cloud image
+    wordcloud = WordCloud().generate(text)
 
-# The pil way (if you don't have matplotlib)
-#image = wordcloud.to_image()
-#image.show()
+    # Display the generated image:
+    # the matplotlib way:
+    #plt.imshow(wordcloud)
+    #plt.axis("off")
+
+    # take relative word frequencies into account, lower max_font_size
+    wordcloud = WordCloud(max_font_size=40, relative_scaling=.5).generate(text)
+    plt.figure()
+    plt.imshow(wordcloud)
+    plt.axis("off")
+
+    plt.savefig(twitter.settings.STATICFILES_DIR + '/images/test.png')
+
+    # The pil way (if you don't have matplotlib)
+    #image = wordcloud.to_image()
+    #image.show()

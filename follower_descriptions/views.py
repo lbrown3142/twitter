@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.db.models import Count
 
+from follower_descriptions.word_cloud import GenerateWordCloud
 from twitter.settings import AWS
 from . import follower_descriptions_search, tasks
 import twitter
@@ -19,8 +20,11 @@ from elasticsearch_dsl import Search, Q
 
 from twitter import settings
 
+
 @login_required
 def search_following(request):
+
+    GenerateWordCloud()
 
     try:
         twitter_handle = request.POST["twitter_handle"]
@@ -50,7 +54,7 @@ def search_following(request):
     # Get the universities, with a count of how many graduates are following them
     followers = models.University.objects.annotate(num_followers=Count('graduate'))
 
-    context = { 'organisations': followers }
+    context = { 'organisations': followers, 'base_dir': twitter.settings.BASE_DIR }
     return render(request, 'follower_descriptions/organisations.html', context)
 
 @login_required
