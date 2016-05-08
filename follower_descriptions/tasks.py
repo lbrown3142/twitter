@@ -198,6 +198,7 @@ def hourly_updates():
 @periodic_task(run_every=(crontab(minute=0, hour=0))) # Daily at midnight
 def daily_updates():
     log('TASK: daily_updates')
+    update_task_stats('daily_updates')
 
     # Refresh university followers
     task_periodic_refresh_all_follower_ids.delay()
@@ -206,6 +207,7 @@ def daily_updates():
 @periodic_task(run_every=(crontab(minute=0, hour=0, day_of_week='sunday')))
 def weekly_updates():
     log('TASK: weekly_updates')
+    update_task_stats('weekly_updates')
 
 def update_task_stats(task_name):
     try:

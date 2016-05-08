@@ -7,6 +7,11 @@ Generating a square wordcloud from the US constitution using default arguments.
 
 from os import path
 from wordcloud import WordCloud
+import matplotlib
+
+# Force matplotlib to not use any Xwindows backend.
+matplotlib.use('Agg')
+
 import matplotlib.pyplot as plt
 import twitter.settings
 
@@ -17,7 +22,7 @@ def GenerateWordCloud():
     text = open(path.join(d, 'word_test.txt')).read()
 
     # Generate a word cloud image
-    wordcloud = WordCloud().generate(text)
+    #wordcloud = WordCloud().generate(text)
 
     # Display the generated image:
     # the matplotlib way:
