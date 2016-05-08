@@ -51,7 +51,7 @@ def search_following(request):
     followers = models.University.objects.annotate(num_followers=Count('graduate'))
 
     context = { 'organisations': followers }
-    return render(request, 'follower_descriptions/search_following.html', context)
+    return render(request, 'follower_descriptions/organisations.html', context)
 
 @login_required
 def search_followers(request):
