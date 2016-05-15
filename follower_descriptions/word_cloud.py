@@ -5,6 +5,9 @@ Minimal Example
 Generating a square wordcloud from the US constitution using default arguments.
 """
 
+
+#http://askubuntu.com/questions/156484/how-do-i-install-python-imaging-library-pil
+
 from os import path
 from wordcloud import WordCloud
 import matplotlib
