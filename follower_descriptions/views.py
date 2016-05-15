@@ -55,7 +55,7 @@ def search_following(request):
     followers = models.University.objects.annotate(num_followers=Count('graduate'))
 
     context = { 'organisations': followers, 'base_dir': twitter.settings.BASE_DIR }
-    return render(request, 'follower_descriptions/organisations.html', context)
+    return render(request, 'follower_descriptions/organisations_admin.html', context)
 
 @login_required
 def search_followers(request):
