@@ -96,7 +96,7 @@ def task_get_follower_ids(self, uni_handle, cursor=-1):
             log('task_get_follower_ids ' + uni_handle + "... exception: " + e.msg)
 
 @app.task(bind=True)
-def task_get_followers_data(self, id_list, uni_handle):
+def task_get_followers_data(self, id_list, uni_handle, query):
     update_task_stats('task_get_followers_data')
 
     try:
@@ -104,7 +104,17 @@ def task_get_followers_data(self, id_list, uni_handle):
 
         results = follower_descriptions_search.get_followers_data(id_list)
 
-        for data in results:
+        #start new stuff
+
+        #how to get/pass in list of buzz words (query arg) from MySQL?
+        #need for wordcloud too
+        #added new fields in results so model.py needs to be updated
+        filtered_results = follower_descriptions_search.search_distribute(results, uni_handle, query)
+
+
+
+        for data in filtered_results:
+        #finish new stuff
             try:
                 graduate = models.Graduate.objects.get(id=data['id'])
             except models.Graduate.DoesNotExist:
@@ -113,6 +123,7 @@ def task_get_followers_data(self, id_list, uni_handle):
             if len(data['description']) > 6:
                 graduate.name = data['name']
                 graduate.description = data['description']
+                #need to add graduate location, contacted? etc
                 graduate.last_refresh = timezone.now()
                 graduate.twitter_handle = data['screen_name']
                 graduate.save() # Need to save before adding relationship
@@ -136,10 +147,12 @@ def task_get_followers_data(self, id_list, uni_handle):
 
 
 @app.task(bind=True)
-def task_upload_to_kibana(self, data):
+def task_upload_to_kibana(self, data, query):
     update_task_stats('task_upload_to_kibana')
     retry = 2
     while retry > 0:
+
+
 
         try:
 
