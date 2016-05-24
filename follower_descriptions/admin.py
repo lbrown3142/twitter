@@ -7,4 +7,5 @@ admin.site.register(models.Comment)
 admin.site.register(models.Feedback)
 admin.site.register(models.TaskStats)
 admin.site.register(models.CeleryTasksRetrying)
+admin.site.register(models.BuzzWords)
 

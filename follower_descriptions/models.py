@@ -23,6 +23,13 @@ class Graduate(models.Model):
         return self.name
 
 
+class BuzzWords(models.Model):
+    buzz_word = models.CharField(max_length=128, default='', primary_key=True)
+    count = models.BigIntegerField(default = 0)
+
+    def __str__(self):
+        return self.buzz_word
+
 class Comment(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, related_name="user")
