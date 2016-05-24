@@ -17,6 +17,8 @@ class Graduate(models.Model):
     last_refresh = models.DateTimeField()
     description = models.CharField(max_length = 4096, default='')
     name = models.CharField(max_length = 128, default='')
+    contacted = models.BooleanField(default=False)
+    contacted_on = models.DateTimeField(null=True)
     following = models.ManyToManyField(University)
 
     def __str__(self):

@@ -175,7 +175,7 @@ def task_get_followers_data(self, id_list, uni_handle):
 
                 task_upload_to_elasticsearch.delay(data)
 
-        print("task_get_followers_data succeeded: " + uni_handle)
+        log("task_get_followers_data succeeded: " + uni_handle)
 
         # If we get to here, the task is done and we can remove the tracker record
         task_tracker.delete()

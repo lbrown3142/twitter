@@ -75,6 +75,7 @@
         <div class="col-md-8">
             <p>{{detail.user_description}}</p>
             <p>Following: {{ uni_name }} </p>
+            <p>Contacted: {{ contacted }}</p>
         </div>
     </div>
 </div>
@@ -141,6 +142,15 @@
     <label>
         Add Comment:
     </label>
+    <br/>
+
+    {% if contacted %}
+    <input type="checkbox" name="contacted"  checked disabled />
+    Contacted on {{ contacted_on }}<br/>
+    {% else %}
+    <input type="checkbox" name="contacted" />Mark contacted<br/>
+    {% endif %}
+
     <input type='text' name="description" value=''/>
     <input type="submit" value="Add"/>
 </form>

@@ -168,13 +168,35 @@ def user_detail(request, twitter_handle):
 
     graduate = models.Graduate.objects.get(twitter_handle=twitter_handle)
 
+    contacted = graduate.contacted
+    contacted_on = graduate.contacted_on
+
     if (request.method == 'POST'):
         description = request.POST['description']
 
-        comment = models.Comment(user = request.user,
+        # Check for a newly contacted post
+        posted_contacted = request.POST.get('contacted', '')
+        if not contacted and posted_contacted == 'on':
+            contacted = True
+            contacted_on = timezone.now()
+
+            # Mark the graduate contacted
+            graduate.contacted = contacted
+            graduate.contacted_on = contacted_on
+            graduate.save()
+
+            # Add a "Has been contacted" comment
+            comment = models.Comment(user=request.user,
+                                     graduate=graduate,
+                                     description='Contacted on ' + contacted_on.strftime("%Y-%m-%d %H:%M"))
+            comment.save()
+
+        # Save a non-empty comment
+        if description:
+            comment = models.Comment(user = request.user,
                                  graduate = graduate,
                                  description = description)
-        comment.save()
+            comment.save()
 
 
     # See http://elasticsearch-dsl.readthedocs.org/en/latest/search_dsl.html
@@ -202,11 +224,15 @@ def user_detail(request, twitter_handle):
     #profile_banner_info = follower_descriptions_search.get_profile_banner_info(twitter_handle, graduate.id)
 
 
+
     context = { 'screen_name': twitter_handle,
                 'name': graduate.name,
                 'detail': response[0],
                 'uni_name': university.name,
-                'comments': comment_list}
+                'comments': comment_list,
+                'contacted': contacted,
+                'contacted_on' : contacted_on}
+
     return render(request, 'follower_descriptions/user_detail.html', context)
 
 def settings(request):
