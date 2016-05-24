@@ -1,14 +1,12 @@
 import urllib
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-from django.views.generic import TemplateView
 from django.db.models import Count
 
 from follower_descriptions.word_cloud import GenerateWordCloud
 from twitter.settings import AWS
-from . import follower_descriptions_search, tasks
+from . import tasks
 import twitter
 import celery
 from celery.task.control import inspect
@@ -20,6 +18,8 @@ from elasticsearch_dsl import Search, Q
 
 from twitter import settings
 
+from datetime import timedelta
+from django.utils import timezone
 
 @login_required
 def search_following(request):
@@ -245,6 +245,7 @@ def settings(request):
             models.Graduate.objects.all().delete()
             models.Comment.objects.all().delete()
             models.TaskStats.objects.all().delete()
+            models.CeleryTasksRetrying.objects.all().delete()
 
             # We don't delete users (otherwise we would delete admin users)
             # We don't delete feedback
@@ -271,3 +272,14 @@ def contact(request):
 
 
      return render(request, 'follower_descriptions/contact.html', context)
+
+def test(request):
+    x = timezone.now()
+    last_refresh  = x - timedelta(minutes=1)
+
+    if last_refresh < x :
+        pass
+
+    return render(request, 'follower_descriptions/contact.html', {})
+    #if university.last_refresh == None or university.last_refresh < (timezone.now() - timedelta(days=7)):
+

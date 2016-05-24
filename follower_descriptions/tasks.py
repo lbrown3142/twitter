@@ -44,10 +44,28 @@ def task_periodic_refresh_all_follower_ids(self):
     for uni in universities:
         task_get_follower_ids.delay(uni.uni_handle)
 
+def StartTrackingTask(uni_handle, task_id, task_name):
+    try:
+        task_tracker = models.CeleryTasksRetrying.objects.get(task_id=task_id)
+    except models.CeleryTasksRetrying.DoesNotExist:
+        task_tracker = models.CeleryTasksRetrying(task_id=task_id)
+        task_tracker.uni_handle = uni_handle
+        task_tracker.task_name = task_name
+
+        # task_tracker.created defaults to now
+        task_tracker.save()
+    return task_tracker
+
+
 @app.task(bind=True)
 def task_get_follower_ids(self, uni_handle, cursor=-1):
     log('task_get_follower_ids ' + uni_handle + "...")
     update_task_stats('task_get_follower_ids')
+
+    # Create a tracking record for this task. It will automatically be timestamped on creation
+    task_id = task_get_follower_ids.request.id
+    task_tracker = StartTrackingTask(uni_handle, task_id, 'task_get_follower_ids')
+
 
     try:
         try:
@@ -57,7 +75,7 @@ def task_get_follower_ids(self, uni_handle, cursor=-1):
 
         if cursor == -1:
             # First call into the recursion
-            if university.last_refresh == None or university.last_refresh < timezone.now() - timedelta(days=7):
+            if university.last_refresh == None or university.last_refresh < (timezone.now() - timedelta(days=7)):
                 # Get the university name (more descriptive than its handle)
                 uni_data = follower_descriptions_search.get_users_by_screen_name([uni_handle])
                 name = uni_data[0]['name']
@@ -73,6 +91,8 @@ def task_get_follower_ids(self, uni_handle, cursor=-1):
         if cursor != 0:
             # Recursive call passing in the cursor
             task_get_follower_ids.delay(uni_handle, cursor)
+        else:
+            log('task_get_follower_ids ' + uni_handle + "...done all. Cursor == 0")
 
         # Process the id's, 100 at a time, by spawning child tasks to get their descriptions.
         for start in range(0, len(results), 100):
@@ -85,18 +105,36 @@ def task_get_follower_ids(self, uni_handle, cursor=-1):
             # Spawn a task to fetch up to 100 followers
             task_get_followers_data.delay(data, uni_handle)
 
-        log('task_get_follower_ids ' + uni_handle + "...done")
+        log('task_get_follower_ids ' + uni_handle + "...done batch")
 
-    except urllib.error.HTTPError as e:
+        # If we get to here, the task is done and we can remove the tracker record
+        task_tracker.delete()
+
+
+    #except urllib.error.HTTPError as e:
 
         # 429 means Too Many Requests
-        if e.code == 429:
-            self.retry(exc=e, countdown=int(1000))
+    #    if e.code == 429:
+    #        self.retry(exc=e, countdown=int(1000))
+    #    else:
+    #        log('task_get_follower_ids ' + uni_handle + "... exception: " + str(e))
+
+    except Exception as e:
+        # 2^12 minutes is about 2.8 days. So task will retry for about 5.6 days
+        if self.request.retries < 12:
+            self.retry(exc=e, countdown=int(60 * (2 ** self.request.retries)))
+            log('task_get_follower_ids failed: ' + uni_handle +  ' retry ' + str(self.request.retries) + ' Exception ' + str(e))
         else:
-            log('task_get_follower_ids ' + uni_handle + "... exception: " + e.msg)
+            log('task_get_follower_ids failed: ' + uni_handle +  ' too many retries. Exception ' + str(e))
+
 
 @app.task(bind=True)
 def task_get_followers_data(self, id_list, uni_handle):
+
+    # Create a tracking record for this task. It will automatically be timestamped on creation
+    task_id = task_get_followers_data.request.id
+    task_tracker = StartTrackingTask(uni_handle, task_id, 'task_get_followers_data')
+
     update_task_stats('task_get_followers_data')
 
     try:
@@ -122,62 +160,76 @@ def task_get_followers_data(self, id_list, uni_handle):
                 data['followed_uni_handle'] = uni_handle
                 data['category'] = ''
 
-                task_upload_to_kibana.delay(data)
+                task_upload_to_elasticsearch.delay(data)
 
         print("task_get_followers_data succeeded: " + uni_handle)
 
-    except urllib.error.HTTPError as e:
-        print("task_get_followers_data failed. Exception: {0}".format(e.msg))
+        # If we get to here, the task is done and we can remove the tracker record
+        task_tracker.delete()
+
+    #except urllib.error.HTTPError as e:
 
         # 429 means Too Many Requests
-        if e.code == 429:
-            self.retry(exc=e,
-                       countdown=int(60 * (2 ** self.request.retries)))
+    #    if e.code == 429:
+    #        self.retry(exc=e, countdown=int(60 * (2 ** self.request.retries)))
+
+    except Exception as e:
+        # 2^12 minutes is about 2.8 days
+        if self.request.retries < 12:
+            self.retry(exc=e, countdown=int(60 * (2 ** self.request.retries)))
+            log('task_get_followers_data failed: ' + uni_handle + ' retry ' + str(self.request.retries) + ' Exception ' + str(e))
+        else:
+            log('task_get_followers_data failed: ' + uni_handle + ' too many retries. Exception ' + str(e))
+
 
 
 @app.task(bind=True)
-def task_upload_to_kibana(self, data):
-    update_task_stats('task_upload_to_kibana')
-    retry = 2
-    while retry > 0:
+def task_upload_to_elasticsearch(self, data):
 
-        try:
+    update_task_stats('task_upload_to_elasticsearch')
+    screen_name = ''
 
-            description = data['description']
+    try:
+        screen_name = data['screen_name']
+        description = data['description']
 
-            # We need to escape newlines because they have special meaning for the elasticsearch API
-            description = description.replace('\n', '\\n')
+        # We need to escape newlines because they have special meaning for the elasticsearch API
+        description = description.replace('\n', '\\n')
 
-            # and quotes " escaped as \\"
-            description = description.replace('"', '\\"')
+        # and quotes " escaped as \\"
+        description = description.replace('"', '\\"')
 
-            payload = '{"index": {"_id" : "' + str(data['id']) + '"}}\n'
-            payload += '{"category": "' + data['category'] + '", "screen_name":"' + data['screen_name'] + '",'
-            payload += '"url":"' + str(data['url']) + '", "user_description":"' + description + '",'
-            payload += '"followed_uni_handle":"' + data['followed_uni_handle'] + '"}\n'
+        payload = '{"index": {"_id" : "' + str(data['id']) + '"}}\n'
+        payload += '{"category": "' + data['category'] + '", "screen_name":"' + data['screen_name'] + '",'
+        payload += '"url":"' + str(data['url']) + '", "user_description":"' + description + '",'
+        payload += '"followed_uni_handle":"' + data['followed_uni_handle'] + '"}\n'
 
-            req = urllib.request.Request(url='http://' + AWS + ':9200/my_index/twitter/_bulk',
-                                         data=payload.encode('utf-8'),
-                                         method='PUT')
+        req = urllib.request.Request(url='http://' + AWS + ':9200/my_index/twitter/_bulk',
+                                     data=payload.encode('utf-8'),
+                                     method='PUT')
 
-            with urllib.request.urlopen(req) as f:
-                pass
+        with urllib.request.urlopen(req) as f:
+            pass
 
-            print("task_upload_to_kibana succeeded: " + data['screen_name'])
-            retry = 0
-        except urllib.error.HTTPError as e:
-            print("task_upload_to_kibana failed. Exception: {0}".format(e.msg))
+            log("task_upload_to_elasticsearch succeeded: " + data['screen_name'])
 
-            # 429 means Too Many Requests
-            if e.code == 429:
-                self.retry(exc=e,
-                           countdown=int(60 * (2 ** self.request.retries)))
+    #except urllib.error.HTTPError as e:
 
-            retry -= 1
-        except Exception as e:
-           # print('EXCEPTION: ' + str(e))
-            pprint.pprint(data)
-            retry -= 1
+        # 429 means Too Many Requests
+        #    if e.code == 429:
+        #        self.retry(exc=e, countdown=int(60 * (2 ** self.request.retries)))
+
+        # log("task_upload_to_elasticsearch failed. Exception: {0}".format(str(e)))
+
+    except Exception as e:
+        # 2^12 minutes is about 2.8 days
+        if self.request.retries < 12:
+            self.retry(exc=e, countdown=int(60 * (2 ** self.request.retries)))
+            log('task_upload_to_elasticsearch failed: ' + screen_name + ' retry ' + str(self.request.retries) + ' Exception ' + str(e))
+        else:
+            log('task_upload_to_elasticsearch failed: ' + screen_name + ' too many retries. Exception ' + str(e))
+
+
 
 # See here for more crontab options:
 # http://docs.celeryproject.org/en/latest/userguide/periodic-tasks.html

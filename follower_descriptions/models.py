@@ -49,3 +49,14 @@ class TaskStats(models.Model):
 
     def __str__(self):
         return self.task_name
+
+
+class CeleryTasksRetrying(models.Model):
+    task_id = models.CharField(primary_key=True, max_length=128)
+    uni_handle = models.CharField(max_length=128)
+    task_name = models.CharField(max_length=128)
+    created = models.DateTimeField(auto_now_add=True, blank=True)
+
+
+    def __str__(self):
+        return self.task_id + ' : ' + self.task_name + ' : ' + self.uni_handle + ' : ' + str(self.created)
