@@ -137,12 +137,11 @@ def search_distribute(json_list, uni_handle, query):
         description = (people["description"].encode("utf-8", errors="ignore")).lower()
 
         for search_term in query:
-            try:
-                search_term_bytes = search_term.encode('utf-8')
-                if search_term_bytes in description:
-                    results.append({"user_id": people["id_str"], "screen_name": people["screen_name"], "followed_uni_handle": uni_handle, "category": search_term, "user_description": people["description"], "url": 'https://twitter.com/' + people['screen_name']})
-            except TypeError:
-                throw
+
+            search_term_bytes = search_term.encode('utf-8')
+            if search_term_bytes in description:
+                results.append({"user_id": people["id_str"], "screen_name": people["screen_name"], "location": people["location"], "followed_uni_handle": uni_handle, "category": search_term, "user_description": people["description"], "url": 'https://twitter.com/' + people['screen_name']})
+
 
     return results
 

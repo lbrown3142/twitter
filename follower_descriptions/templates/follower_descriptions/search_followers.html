@@ -15,7 +15,7 @@
             <input type='text' class="search-form" name="search_term" value='{{search_term}}'
                    placeholder=" e.g. Data Science "/>
             <input type='hidden' name="cursor" value='{{cursor}}'/>
-            <input class="btn btn-default" type="submit" name="search" value="Search"/>
+            <input class="btn btn-primary" type="submit" name="search" value="Search"/>
         </div>
 
 
@@ -37,8 +37,8 @@
         </table>
 
         <div class="curser-buttons">
-            <input class="btn btn-default" type="submit" name="previous" value="Previous page" {{previous_disabled}}/>
-            <input class="btn btn-default" type="submit" name="next" value="Next page" {{next_disabled}}/>
+            <input class="btn btn-primary" type="submit" name="previous" value="Previous page" {{previous_disabled}}/>
+            <input class="btn btn-parimary" type="submit" name="next" value="Next page" {{next_disabled}}/>
             <label>Results {{cursor}}-{{cursor_end}} of {{count}} </label>
 
         </div>

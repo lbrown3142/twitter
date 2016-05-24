@@ -142,7 +142,19 @@ def task_get_followers_data(self, id_list, uni_handle):
 
         results = follower_descriptions_search.get_followers_data(id_list)
 
+        #start new stuff
+
+        #how to get/pass in list of buzz words (query arg) from MySQL?
+        #need for wordcloud too
+        #added new fields in results so model.py needs to be updated
+        #filtered_results = follower_descriptions_search.search_distribute(results, uni_handle, query)
+
+
+
+        #for data in filtered_results:
         for data in results:
+
+            #finish new stuff
             try:
                 graduate = models.Graduate.objects.get(id=data['id'])
             except models.Graduate.DoesNotExist:
@@ -151,6 +163,7 @@ def task_get_followers_data(self, id_list, uni_handle):
             if len(data['description']) > 6:
                 graduate.name = data['name']
                 graduate.description = data['description']
+                #need to add graduate location, contacted? etc
                 graduate.last_refresh = timezone.now()
                 graduate.twitter_handle = data['screen_name']
                 graduate.save() # Need to save before adding relationship
