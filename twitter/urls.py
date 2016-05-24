@@ -30,5 +30,5 @@ urlpatterns = [
     url(r'^logout$', django.contrib.auth.views.logout, {'next_page': 'login'}, name='logout'),
     url(r'^about$', views.about),
     url(r'^contact$', views.contact),
-    url(r'^test$', views.test)
+    #url(r'^test$', views.test)
     ]

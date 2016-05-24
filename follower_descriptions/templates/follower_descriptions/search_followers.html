@@ -22,6 +22,7 @@
         <table class="table">
             <thead>
             <tr>
+                <th>Contacted:</th>
                 <th>Name:</th>
                 <th>Description:</th>
             </tr>
@@ -29,6 +30,7 @@
             <tbody>
             {% for result in followers %}
             <tr>
+                <td>{{result.contacted}}</td>
                 <td><a href="/search/user/{{ result.screen_name }}">{{ result.screen_name }}</a></td>
                 <td>{{result.user_description}}</td>
             </tr>

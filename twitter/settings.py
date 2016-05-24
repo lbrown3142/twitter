@@ -153,7 +153,7 @@ LOGIN_URL = '/login'
 LOGOUT_URL = '/logout'
 LOGIN_REDIRECT_URL = '/'
 
-CAPGEMINI_LOG = True    # Enables logging to /var/log/capgemini/tasks.log
+CAPGEMINI_LOG = False    # Enables logging to /var/log/capgemini/tasks.log
                         # Need to ensure /var/log/capgemini/ has write permissions so celery user can write to it
                         # e.g. sudo mkdir /var/log/capgemini; chmod 777 /var/log/capgemini
 

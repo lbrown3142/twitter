@@ -100,6 +100,20 @@ def search_followers(request):
 
         response = s.execute(ignore_cache=True)
 
+        for result in response:
+            screen_name = result['screen_name']
+
+            # We should be able to find just the one graduate. But filter syntax returns a list of one.
+            graduates = models.Graduate.objects.filter(twitter_handle = screen_name)
+            if len(graduates) > 0:
+                graduate = graduates[0]
+                if graduate.contacted:
+                    result['contacted'] = 'yes'
+                else:
+                    result['contacted'] = ''
+
+            pass
+
         count = response.hits.total
 
         if cursor_end > count:

@@ -139,10 +139,6 @@
 
 <form action='' method='post'>
     {% csrf_token %}
-    <label>
-        Add Comment:
-    </label>
-    <br/>
 
     {% if contacted %}
     <input type="checkbox" name="contacted"  checked disabled />
@@ -150,6 +146,15 @@
     {% else %}
     <input type="checkbox" name="contacted" />Mark contacted<br/>
     {% endif %}
+
+
+    <br/>
+
+    <label>
+        Add Comment:
+    </label>
+    <br/>
+
 
     <input type='text' name="description" value=''/>
     <input type="submit" value="Add"/>
