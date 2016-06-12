@@ -90,7 +90,7 @@ def search_followers(request):
         #    .query("match", user_description=search_term)
 
         s = Search(using=client, index="my_index") \
-            .query("multi_match", query=search_term, fields=['user_description','screen_name'])
+            .query("multi_match", query=search_term, fields=['user_description','screen_name', 'followed_uni_handle'])
 
         if (cursor < 0):
             cursor = 0
