@@ -40,6 +40,7 @@ def search_following(request):
 
         tasks.log('search_following ' + twitter_handle + '...done')
     except Exception as e:
+        #tasks.log('search_following: Exception ' + str(e))
         pass
 
     # Retrieve tasks

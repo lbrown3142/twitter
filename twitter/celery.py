@@ -13,6 +13,7 @@ app = Celery('twitter')
 
 app.conf.update(
     CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend',
+    CELERYD_POOL = 'celery.concurrency.threads:TaskPool'
 )
 
 # Using a string here means the worker will not have to
@@ -21,3 +22,5 @@ app.config_from_object('django.conf:settings')
 
 # load task modules from all registered Django app configs.
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+
+CELERYD_POOL = 'celery.concurrency.threads:TaskPool'
