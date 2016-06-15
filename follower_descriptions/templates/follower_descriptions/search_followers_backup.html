@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form action='' method='post'>
+    {% csrf_token %}
+
+    <div>
+
+        <div class="search-candidates">
+            <label>
+                Search Candidates:
+            </label>
+
+
+            <input type='text' class="search-form" name="search_term" accept="followed_uni_handle/*" value=' {{search_term}}'
+                   placeholder=" e.g. Data Science "/>
+            <input type='hidden' name="cursor" value='{{cursor}}'/>
+            <input class="btn btn-primary" type="submit" name="search" value="Search"/>
+        </div>
+
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Handle:</th>
+                <th>Description:</th>
+                <th>Location:</th>
+                <th>Following:</th>
+                <th>Metadata:</th>
+                <th>Contacted:</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for result in followers %}
+            <tr>
+                <td><a href="https://twitter.com/{{ result.screen_name }}">{{ result.screen_name }}</a></td>
+                <td>{{result.user_description}}</td>
+                <td>Holder</td>
+                <td>{{ result.followed_uni_handle }}</td>
+                <td><a href="/search/user/{{ result.screen_name }}">Metadata</a></td>
+                <td>{{result.contacted}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="curser-buttons">
+            <input class="btn btn-primary" type="submit" name="previous" value="Previous page" {{previous_disabled}}/>
+            <input class="btn btn-parimary" type="submit" name="next" value="Next page" {{next_disabled}}/>
+            <label>Results {{cursor}}-{{cursor_end}} of {{count}} </label>
+
+        </div>
+
+
+</form>
+
+{% endblock %}

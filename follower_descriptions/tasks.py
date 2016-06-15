@@ -163,7 +163,7 @@ def task_get_followers_data(self, id_list, uni_handle):
             if len(data['description']) > 6:
                 graduate.name = data['name']
                 graduate.description = data['description']
-                #need to add graduate location, contacted? etc
+                graduate.location = data['location']
                 graduate.last_refresh = timezone.now()
                 graduate.twitter_handle = data['screen_name']
                 graduate.save() # Need to save before adding relationship
@@ -215,6 +215,7 @@ def task_upload_to_elasticsearch(self, data):
         payload = '{"index": {"_id" : "' + str(data['id']) + '"}}\n'
         payload += '{"category": "' + data['category'] + '", "screen_name":"' + data['screen_name'] + '",'
         payload += '"url":"' + str(data['url']) + '", "user_description":"' + description + '",'
+        payload += '"location":"' + data['location'] + '",'
         payload += '"followed_uni_handle":"' + data['followed_uni_handle'] + '"}\n'
 
         req = urllib.request.Request(url='http://' + AWS + ':9200/my_index/twitter/_bulk',

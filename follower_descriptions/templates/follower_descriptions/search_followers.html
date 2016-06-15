@@ -12,44 +12,75 @@
             </label>
 
 
-            <input type='text' class="search-form" name="search_term" accept="followed_uni_handle/*" value=' {{search_term}}'
+            <input type='text' class="search-form" name="search_term" accept="followed_uni_handle/*"
+                   value=' {{search_term}}'
                    placeholder=" e.g. Data Science "/>
             <input type='hidden' name="cursor" value='{{cursor}}'/>
             <input class="btn btn-primary" type="submit" name="search" value="Search"/>
         </div>
 
 
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Handle:</th>
-                <th>Description:</th>
-                <th>Location:</th>
-                <th>Following:</th>
-                <th>Metadata:</th>
-                <th>Contacted:</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for result in followers %}
-            <tr>
-                <td><a href="https://twitter.com/{{ result.screen_name }}">{{ result.screen_name }}</a></td>
-                <td>{{result.user_description}}</td>
-                <td>Holder</td>
-                <td>{{ result.followed_uni_handle }}</td>
-                <td><a href="/search/user/{{ result.screen_name }}">Metadata</a></td>
-                <td>{{result.contacted}}</td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
 
-        <div class="curser-buttons">
-            <input class="btn btn-primary" type="submit" name="previous" value="Previous page" {{previous_disabled}}/>
-            <input class="btn btn-parimary" type="submit" name="next" value="Next page" {{next_disabled}}/>
-            <label>Results {{cursor}}-{{cursor_end}} of {{count}} </label>
+        <div class="container">
 
-        </div>
+            <!--<h1>Click the filter icon
+                <small>(<i class="glyphicon glyphicon-filter"></i>)</small>
+            </h1>-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Candidates</h3>
+                            <div class="pull-right">
+							<span class="clickable filter" data-toggle="tooltip" title="Toggle table filter"
+                                  data-container="body">
+								<i class="glyphicon glyphicon-filter"></i>
+							</span>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <input type="text" class="form-control" id="dev-table-filter" data-action="filter"
+                                   data-filters="#dev-table" placeholder="Filter Developers"/>
+                        </div>
+                        <table class="table table-hover" id="dev-table">
+                            <thead>
+                            <tr>
+                                <th>Handle:</th>
+                                <th>Description:</th>
+                                <th>Location:</th>
+                                <th>Following:</th>
+                                <th>Metadata:</th>
+                                <th>Contacted:</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                    {% for result in followers %}
+                    <tr>
+                        <td><a href="https://twitter.com/{{ result.screen_name }}">{{ result.screen_name }}</a></td>
+                        <td>{{result.user_description}}</td>
+                        <td>{{result.location}}</td>
+                        <td>{{ result.followed_uni_handle }}</td>
+                        <td><a href="/search/user/{{ result.screen_name }}">Metadata</a></td>
+                        <td>{{result.contacted}}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+
+
+
+
+                        </table>
+                    </div>
+                </div>
+
+                <div class="curser-buttons">
+                    <input class="btn btn-primary" type="submit" name="previous" value="Previous page"
+                           {{previous_disabled}}/>
+                    <input class="btn btn-parimary" type="submit" name="next" value="Next page" {{next_disabled}}/>
+                    <label>Results {{cursor}}-{{cursor_end}} of {{count}} </label>
+
+                </div>
 
 
 </form>
