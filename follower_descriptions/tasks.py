@@ -22,20 +22,23 @@ kibana_uploads = 0;
 def log(message):
     message = datetime.datetime.utcnow().isoformat() + " " + message
 
-    print(message)
     try:
         if settings.CAPGEMINI_LOG == True:
             with open('/var/log/capgemini/tasks.log', 'a') as the_file:
                 the_file.write(message + '\n')
-    except Exception as e:
+    except BaseException as e:
         pass
 
-@app.task(bind=True)
-def task_test(self):
-    update_task_stats('task_test')
-    self.retry(countdown=int(60))
+    print(message)
 
-@app.task(bind=True)
+def ComputeBackoff(retry):
+    # Backoff 1, 2, 4, 8, 16(max) minutes.
+    backoff = int(60 * (2 ** retry))
+    if retry > 3:
+        backoff = 60 * 16
+    return backoff
+
+@app.task(bind=True, max_retries=12)
 def task_periodic_refresh_all_follower_ids(self):
     update_task_stats('task_periodic_refresh_all_follower_ids')
 
@@ -57,7 +60,7 @@ def StartTrackingTask(uni_handle, task_id, task_name):
     return task_tracker
 
 
-@app.task(bind=True)
+@app.task(bind=True, max_retries=12)
 def task_get_follower_ids(self, uni_handle, cursor=-1):
     log('task_get_follower_ids ' + uni_handle + "...")
     update_task_stats('task_get_follower_ids')
@@ -119,16 +122,17 @@ def task_get_follower_ids(self, uni_handle, cursor=-1):
     #    else:
     #        log('task_get_follower_ids ' + uni_handle + "... exception: " + str(e))
 
-    except Exception as e:
+    except BaseException as e:
         # 2^12 minutes is about 2.8 days. So task will retry for about 5.6 days
         if self.request.retries < 12:
-            self.retry(exc=e, countdown=int(60 * (2 ** self.request.retries)))
-            log('task_get_follower_ids failed: ' + uni_handle +  ' retry ' + str(self.request.retries) + ' Exception ' + str(e))
+            self.retry(exc=e, countdown=ComputeBackoff(self.request.retries) )
         else:
             log('task_get_follower_ids failed: ' + uni_handle +  ' too many retries. Exception ' + str(e))
+    except:
+        log('task_get_follower_ids failed: general exception ' + uni_handle)
 
 
-@app.task(bind=True)
+@app.task(bind=True, max_retries=12)
 def task_get_followers_data(self, id_list, uni_handle):
 
     # Create a tracking record for this task. It will automatically be timestamped on creation
@@ -186,17 +190,21 @@ def task_get_followers_data(self, id_list, uni_handle):
     #    if e.code == 429:
     #        self.retry(exc=e, countdown=int(60 * (2 ** self.request.retries)))
 
-    except Exception as e:
+        log('task_get_followers_data: ' + uni_handle + ' done')
+
+    except BaseException as e:
+        log('task_get_followers_data failed: ' + uni_handle + ' retry ' + str(self.request.retries))
+
         # 2^12 minutes is about 2.8 days
         if self.request.retries < 12:
-            self.retry(exc=e, countdown=int(60 * (2 ** self.request.retries)))
-            log('task_get_followers_data failed: ' + uni_handle + ' retry ' + str(self.request.retries) + ' Exception ' + str(e))
+            self.retry(exc=e, countdown=ComputeBackoff(self.request.retries))
         else:
             log('task_get_followers_data failed: ' + uni_handle + ' too many retries. Exception ' + str(e))
+    except:
+        log('task_get_followers_data failed: general exception ' + uni_handle)
 
 
-
-@app.task(bind=True)
+@app.task(bind=True, max_retries=12)
 def task_upload_to_elasticsearch(self, data):
 
     update_task_stats('task_upload_to_elasticsearch')
@@ -235,14 +243,14 @@ def task_upload_to_elasticsearch(self, data):
 
         # log("task_upload_to_elasticsearch failed. Exception: {0}".format(str(e)))
 
-    except Exception as e:
+    except BaseException as e:
         # 2^12 minutes is about 2.8 days
         if self.request.retries < 12:
-            self.retry(exc=e, countdown=int(60 * (2 ** self.request.retries)))
-            log('task_upload_to_elasticsearch failed: ' + screen_name + ' retry ' + str(self.request.retries) + ' Exception ' + str(e))
+            self.retry(exc=e, countdown=ComputeBackoff(self.request.retries))
         else:
             log('task_upload_to_elasticsearch failed: ' + screen_name + ' too many retries. Exception ' + str(e))
-
+    except:
+        log('task_upload_to_elasticsearch failed: general exception ' + screen_name)
 
 
 # See here for more crontab options:
