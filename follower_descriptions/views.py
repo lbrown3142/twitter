@@ -65,7 +65,7 @@ def search_followers(request):
     response = {}
     cursor = 0
     cursor_end = 0
-    page_size = 10
+    page_size = 850
     count = 0
     next_disabled = ""
     previous_disabled = ""
