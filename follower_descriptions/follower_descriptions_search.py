@@ -5,11 +5,15 @@ import time
 import urllib.request
 import json
 
-consumer = oauth2.Consumer(key="nvoe6zVUm0TLGC6skoYSHrcMB", secret="LdwAMy9BPrp9iiWQOOGOYL6ityc0onX4nuQLIv4QIoNd6vL2jL")
-token = oauth2.Token(key="1722158881-RAtsr4yeUhBlvKvqGVSDx5fJcMh4H31GHZV4E17", secret="5JjwxAp8RhWOaGqjlwbnklRDBsKZzbYtqrmFEWhKKa3T7")
+#consumer = oauth2.Consumer(key="nvoe6zVUm0TLGC6skoYSHrcMB", secret="LdwAMy9BPrp9iiWQOOGOYL6ityc0onX4nuQLIv4QIoNd6vL2jL")
+#token = oauth2.Token(key="1722158881-RAtsr4yeUhBlvKvqGVSDx5fJcMh4H31GHZV4E17", secret="5JjwxAp8RhWOaGqjlwbnklRDBsKZzbYtqrmFEWhKKa3T7")
 
 #consumer = oauth2.Consumer(key="Szer02dozR3wKB1vrHV3TydrF", secret="z1j9tjcZoUMEKUK5kOgf63fD351sJieMN6m40AsywDf6r5tB6h")
 #token = oauth2.Token(key="3369108609-zxUHGjtfJ3Cw3lA75EJWkb089vReuXBiZXf7q53", secret="SwiKSbbCH0wBwFV1Xxe0Wl012gNl4Dk8I5M1l1CZLD2vN")
+
+# Steve's access tokens
+consumer = oauth2.Consumer(key="zxz7NFdedpCNfq8SebFXEBs0X", secret="9snozBZGrBxmtzR8rwMybwnfHxkfxPcEmiLvRg6LcxusOvWkZV")
+token = oauth2.Token(key="21507127-pm8sxHNxv4LhIkoAnLAwPLc1vMQLWdsv2POmV2w3l", secret="Q8d6twxYHbeHIjut0p1fNTMdVP5P0WTjaYDcI1SljSBrX")
 
 
 def get_users_by_screen_name(screen_names):   #18k per 15 mins
