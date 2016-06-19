@@ -80,10 +80,7 @@ img {
 }
 
 .search-candidates{
-
-    margin-bottom: 25px;
-    margin-left: 7px;
-
+    margin-left: 13px;
 }
 
 .collapse-button{
@@ -173,4 +170,3 @@ img {
 .panel-body{
     display: none;
 }
-
