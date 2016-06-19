@@ -158,6 +158,6 @@ CAPGEMINI_LOG = False    # Enables logging to /var/log/capgemini/tasks.log
                         # e.g. sudo mkdir /var/log/capgemini; chmod 777 /var/log/capgemini
 
 # Enable this to cause celery to run in the same thread as the main app, so we can then debug tasks
-CELERY_ALWAYS_EAGER = True
+CELERY_ALWAYS_EAGER = False
 
 #CELERYD_POOL = 'celery.concurrency.threads:TaskPool'
