@@ -38,7 +38,7 @@ def ComputeBackoff(retry):
         backoff = 60 * 16
     return backoff
 
-@app.task(bind=True, max_retries=1000)
+@app.task(bind=True, max_retries=1)
 def task_periodic_refresh_all_follower_ids(self):
     update_task_stats('task_periodic_refresh_all_follower_ids')
 
@@ -60,7 +60,7 @@ def StartTrackingTask(uni_handle, task_id, task_name):
     return task_tracker
 
 
-@app.task(bind=True, max_retries=1000)
+@app.task(bind=True, max_retries=1)
 def task_get_follower_ids(self, uni_handle, cursor=-1):
     log('task_get_follower_ids ' + uni_handle + "...")
     update_task_stats('task_get_follower_ids')
@@ -124,7 +124,7 @@ def task_get_follower_ids(self, uni_handle, cursor=-1):
 
     except BaseException as e:
         # 2^12 minutes is about 2.8 days. So task will retry for about 5.6 days
-        if self.request.retries < 1000:
+        if self.request.retries < 1:
             self.retry(exc=e, countdown=ComputeBackoff(self.request.retries) )
         else:
             log('task_get_follower_ids failed: ' + uni_handle +  ' too many retries. Exception ' + str(e))
@@ -132,7 +132,7 @@ def task_get_follower_ids(self, uni_handle, cursor=-1):
         log('task_get_follower_ids failed: general exception ' + uni_handle)
 
 
-@app.task(bind=True, max_retries=1000)
+@app.task(bind=True, max_retries=1)
 def task_get_followers_data(self, id_list, uni_handle):
 
     # Create a tracking record for this task. It will automatically be timestamped on creation
@@ -196,7 +196,7 @@ def task_get_followers_data(self, id_list, uni_handle):
         log('task_get_followers_data failed: ' + uni_handle + ' retry ' + str(self.request.retries))
 
         # 2^12 minutes is about 2.8 days
-        if self.request.retries < 1000:
+        if self.request.retries < 1:
             self.retry(exc=e, countdown=ComputeBackoff(self.request.retries))
         else:
             log('task_get_followers_data failed: ' + uni_handle + ' too many retries. Exception ' + str(e))
@@ -204,7 +204,7 @@ def task_get_followers_data(self, id_list, uni_handle):
         log('task_get_followers_data failed: general exception ' + uni_handle)
 
 
-@app.task(bind=True, max_retries=1000)
+@app.task(bind=True, max_retries=1)
 def task_upload_to_elasticsearch(self, data):
 
     update_task_stats('task_upload_to_elasticsearch')
@@ -245,7 +245,7 @@ def task_upload_to_elasticsearch(self, data):
 
     except BaseException as e:
         # 2^12 minutes is about 2.8 days
-        if self.request.retries < 1000:
+        if self.request.retries < 1:
             self.retry(exc=e, countdown=ComputeBackoff(self.request.retries))
         else:
             log('task_upload_to_elasticsearch failed: ' + screen_name + ' too many retries. Exception ' + str(e))
