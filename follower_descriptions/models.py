@@ -13,7 +13,7 @@ class University(models.Model):
 
 class Graduate(models.Model):
     id = models.BigIntegerField(primary_key=True)
-    twitter_handle = models.CharField(max_length=128, default='')
+    twitter_handle = models.CharField(db_index=True, max_length=128, default='')
     last_refresh = models.DateTimeField()
     description = models.CharField(max_length = 4096, default='')
     location = models.CharField(max_length = 4096, default='')
