@@ -1,4 +1,4 @@
-Django==1.9.1
+Django==1.11.29
 Pillow==3.2.0
 amqp==1.4.9
 anyjson==0.3.3
