@@ -3,7 +3,7 @@ Pillow==3.2.0
 amqp==1.4.9
 anyjson==0.3.3
 billiard==3.3.0.22
-celery==3.1.20
+celery==5.2.2
 celery-with-redis==3.0
 cycler==0.10.0
 django-celery==3.1.17
